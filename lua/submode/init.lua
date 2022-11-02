@@ -124,3 +124,5 @@ function submode:leave()
 
     self.current_mode = ""
 end
+
+return setmetatable({}, { __index = submode })
