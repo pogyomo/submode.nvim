@@ -5,20 +5,20 @@ local utils = require("submode.utils")
 ---@field current_mode string
 ---Represent current mode, or empty string if not in submode.
 ---
----@field submode_to_parent table<string, string>
----Save parent mode of the submode
----
----@field submode_to_enter table<string, string>
----Save mapping to enter the submode
----
----@field submode_to_leave table<string, string>
----Save mapping to leave from the submode
+---@field submode_to_info table<string, SubmodeInfo>
+---Infomation of the submode
 ---
 ---@field submode_to_mappings table<string, SubmodeMapping[]>
 ---Mappings of the submode
 ---
 ---@field submode_to_map_escape table<string, MappingInfo[]>
 ---Mappings that will be saved while in the submode
+
+---@class SubmodeInfo
+---
+---@field mode string
+---@field enter string
+---@field leave string
 
 ---@class SubmodeMapping
 ---
@@ -30,9 +30,7 @@ local utils = require("submode.utils")
 ---@diagnostic disable-next-line
 submode = {
     current_mode = "",
-    submode_to_parent = {},
-    submode_to_enter = {},
-    submode_to_leave = {},
+    submode_to_info = {},
     submode_to_mappings = {},
     submode_to_map_escape = {},
 }
@@ -42,21 +40,13 @@ submode = {
 ---@param name string
 ---Name of this submode
 ---
----@param mode string
----Parent of this submode
----
----@param enter string
----Mapping to enter this submode
----
----@param leave string
----Mapping to leave from this submode
-function submode:create(name, mode, enter, leave)
-    self.submode_to_parent[name] = mode
-    self.submode_to_enter[name] = enter
-    self.submode_to_leave[name] = leave
+---@param info SubmodeInfo
+---Infomation of this submode
+function submode:create(name, info)
+    self.submode_to_info[name] = info
 
-    vim.keymap.set(mode, enter, function() self:enter(name) end)
-    vim.keymap.set(mode, leave, function() self:leave()     end)
+    vim.keymap.set(info.mode, info.enter, function() self:enter(name) end)
+    vim.keymap.set(info.mode, info.leave, function() self:leave()     end)
 
     local auname = "submode_" .. name
     vim.api.nvim_create_augroup(auname, {})
@@ -101,7 +91,7 @@ function submode:enter(name)
         return
     end
 
-    local parent = self.submode_to_parent[name]
+    local parent = self.submode_to_info[name].mode
     self.submode_to_map_escape[name] = {}
     for _, map in pairs(self.submode_to_mappings[name] or {}) do
         self.submode_to_map_escape[name] = utils.save(parent, map.lhs, self.submode_to_map_escape[name])
@@ -117,8 +107,9 @@ function submode:leave()
         return
     end
 
+    local parent = self.submode_to_info[self.current_mode].mode
     for _, map in pairs(self.submode_to_mappings[self.current_mode] or {}) do
-        vim.keymap.del(self.submode_to_parent[self.current_mode], map.lhs)
+        vim.keymap.del(parent, map.lhs)
     end
     utils.restore(self.submode_to_map_escape[self.current_mode])
 
