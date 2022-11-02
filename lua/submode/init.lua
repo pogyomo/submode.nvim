@@ -46,6 +46,7 @@ function submode:create(name, info)
     self.submode_to_info[name] = info
 
     vim.keymap.set(info.mode, info.enter, function() self:enter(name) end)
+    -- HACK: What happen if default movement of <ESC> was overwritten?
     vim.keymap.set(info.mode, info.leave, function() self:leave()     end)
 
     local auname = "submode_" .. name

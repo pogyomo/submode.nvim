@@ -1,0 +1,54 @@
+*submode.txt*					       create your own submode
+
+==============================================================================
+Table of Contents                                  *submode-table-of-contents*
+
+1. Before start                                         |submode-before-start|
+2. Introduction						|submode-introduction|
+3. Usage                                                       |submode-usage|
+
+==============================================================================
+Before start                                            *submode-before-start*
+
+This plugin is highly experimental plugin, so anything will change while
+developing this plugin. If you want to use this plugin in daily works, I
+recommend you to check commit message.
+
+==============================================================================
+Introduction                                            *submode-introduction*
+
+I thought it is so convenient if I can change some key mappings with one
+(or more) keys like we change mode. This plugin maybe good for someone who
+thought similar things before.
+
+==============================================================================
+Usage                                                          *submode-usage*
+
+At first, import submode.
+>
+    local submode = require("submode")
+<
+Then, create mode
+>
+    submode:create("name-of-submode", {
+        mode = "parent-mode",
+        enter = "keys-to-enter-this-submode",
+        leave = "keys-to-leave-from-this-submode",
+    })
+<
+Finally, register mappings to submode
+>
+    submode:register("name-of-submode", {
+        lhs = "keys-to-register",
+	rhs = "behavior-of-this-mapping",
+	--rhs = function() --[[you can pass lua function]] end
+	--opt = {} -- also, you can pass opt which vim.keymap.set can recieve
+                   -- This is optional
+    })
+<
+You can get current submode's name via mode method
+>
+    submode:mode() -- This will return current submode's name, or nil if not
+                   -- in submode
+<
+vim:tw=78:ts=8:ft=help:norl:noet:
