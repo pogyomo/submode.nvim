@@ -67,6 +67,7 @@ end
 ---@param map SubmodeMapping
 ---Mapping to register
 function submode:register(name, map)
+    self.submode_to_mappings[name] = self.submode_to_mappings[name] or {}
     map.opts = map.opts or {}
     table.insert(self.submode_to_mappings[name], map)
 end
