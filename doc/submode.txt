@@ -24,9 +24,10 @@ thought similar things before.
 ==============================================================================
 Usage                                                          *submode-usage*
 
-At first, import submode.
+At first, import submode and call setup function once.
 >
     local submode = require("submode")
+    submode:setup()
 <
 Then, create mode
 >
@@ -48,7 +49,11 @@ Finally, register mappings to submode
                    -- This is optional
     })
 <
-You can get current submode's name via mode method
+You can exit from submode by pressing registered leave key, or simply change
+parent mode (e.g. Parent mode is insert mode -> press ':')
+
+If you want to show current submode to statusline, you can get current
+submode's name via mode method
 >
     submode:mode() -- This will return current submode's name, or nil if not
                    -- in submode
