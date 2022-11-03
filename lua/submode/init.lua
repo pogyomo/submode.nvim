@@ -114,7 +114,7 @@ end
 ---Name of submode to enter
 function submode:enter(name)
     if self.current_mode ~= "" then
-        return
+        self:leave()
     end
 
     -- Register mappings
