@@ -17,8 +17,8 @@ local utils = require("submode.utils")
 ---@class SubmodeInfo
 ---
 ---@field mode string
----@field enter string
----@field leave string
+---@field enter string | string[]
+---@field leave string | string[]
 
 ---@class SubmodeMapping
 ---
@@ -45,14 +45,29 @@ submode = {
 function submode:create(name, info)
     self.submode_to_info[name] = info
 
-    -- Register enter and leave key
-    vim.keymap.set(info.mode, info.enter, function() self:enter(name) end)
+    if type(info.enter) == "string" then
+        vim.keymap.set(info.mode, info.enter, function() self:enter(name) end)
+    else
+        for _, enter in pairs(info.enter) do
+            vim.keymap.set(info.mode, enter, function() self:enter(name) end)
+        end
+    end
+
     -- NOTE: To register leave key as a mapping of this submode,
     --       I prevent key confliction (e.g. Register <ESC> as leave key when parent is insert mode)
-    self:register(name, {
-        lhs = info.leave,
-        rhs = function() self:leave() end,
-    })
+    if type(info.leave) == "string" then
+        self:register(name, {
+            lhs = info.leave,
+            rhs = function() self:leave() end,
+        })
+    else
+        for _, leave in pairs(info.leave) do
+            self:register(name, {
+                lhs = leave,
+                rhs = function() self:leave() end,
+            })
+        end
+    end
 
     local auname = "submode_" .. name
     vim.api.nvim_create_augroup(auname, {})
