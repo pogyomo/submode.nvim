@@ -46,8 +46,8 @@ function submode:create(name, info)
     self.submode_to_info[name] = info
 
     vim.keymap.set(info.mode, info.enter, function() self:enter(name) end)
-    -- HACK: What happen if default movement of <ESC> was overwritten?
-    vim.keymap.set(info.mode, info.leave, function() self:leave()     end)
+    ---- HACK: What happen if default movement of <ESC> was overwritten?
+    --vim.keymap.set(info.mode, info.leave, function() self:leave()     end)
 
     local auname = "submode_" .. name
     vim.api.nvim_create_augroup(auname, {})
@@ -93,12 +93,18 @@ function submode:enter(name)
         return
     end
 
+    -- Register mappings
     local parent = self.submode_to_info[name].mode
     self.submode_to_map_escape[name] = {}
     for _, map in pairs(self.submode_to_mappings[name] or {}) do
         self.submode_to_map_escape[name] = utils.save(parent, map.lhs, self.submode_to_map_escape[name])
         vim.keymap.set(parent, map.lhs, map.rhs, map.opts)
     end
+
+    -- Register leave mapping
+    local leave = self.submode_to_info[name].leave
+    self.submode_to_map_escape[name] = utils.save(parent, leave, self.submode_to_map_escape[name])
+    vim.keymap.set(parent, leave, function() self:leave() end)
 
     self.current_mode = name
 end
@@ -109,10 +115,13 @@ function submode:leave()
         return
     end
 
+    -- Delete mappings and leave mapping
     local parent = self.submode_to_info[self.current_mode].mode
     for _, map in pairs(self.submode_to_mappings[self.current_mode] or {}) do
         vim.keymap.del(parent, map.lhs)
     end
+    vim.keymap.del(parent, self.submode_to_info[self.current_mode].leave)
+
     utils.restore(self.submode_to_map_escape[self.current_mode])
 
     self.current_mode = ""
