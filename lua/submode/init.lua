@@ -35,6 +35,20 @@ submode = {
     submode_to_map_escape = {},
 }
 
+function submode:setup()
+    -- Create autocommand to exit submode when
+    -- parent mode is changed
+    local name = "submode_augroup"
+    vim.api.nvim_create_augroup(name, {})
+    vim.api.nvim_create_autocmd("ModeChanged", {
+        group = name,
+        pattern = "*",
+        callback = function()
+            self:leave()
+        end
+    })
+end
+
 ---Create a new submode
 ---
 ---@param name string
@@ -69,15 +83,15 @@ function submode:create(name, info)
         end
     end
 
-    local auname = "submode_" .. name
-    vim.api.nvim_create_augroup(auname, {})
-    vim.api.nvim_create_autocmd("ModeChanged", {
-        group = auname,
-        pattern = "*",
-        callback = function()
-            self:leave()
-        end
-    })
+    --local auname = "submode_" .. name
+    --vim.api.nvim_create_augroup(auname, {})
+    --vim.api.nvim_create_autocmd("ModeChanged", {
+    --    group = auname,
+    --    pattern = "*",
+    --    callback = function()
+    --        self:leave()
+    --    end
+    --})
 end
 
 ---Register mapping to submode
