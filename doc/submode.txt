@@ -34,15 +34,17 @@ Then, create mode
         mode = "parent-mode",
         enter = "keys-to-enter-this-submode",
         leave = "keys-to-leave-from-this-submode",
+        --enter = { "key1", "key2", ... } -- you can pass multiple key
+        --leave = { "key1", "key2", ... } 
     })
 <
 Finally, register mappings to submode
 >
     submode:register("name-of-submode", {
         lhs = "keys-to-register",
-	rhs = "behavior-of-this-mapping",
-	--rhs = function() --[[you can pass lua function]] end
-	--opt = {} -- also, you can pass opt which vim.keymap.set can recieve
+        rhs = "behavior-of-this-mapping",
+        --rhs = function() --[[you can pass lua function]] end
+        --opt = {} -- also, you can pass opt which vim.keymap.set can recieve
                    -- This is optional
     })
 <
