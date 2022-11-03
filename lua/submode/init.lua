@@ -82,16 +82,6 @@ function submode:create(name, info)
             })
         end
     end
-
-    --local auname = "submode_" .. name
-    --vim.api.nvim_create_augroup(auname, {})
-    --vim.api.nvim_create_autocmd("ModeChanged", {
-    --    group = auname,
-    --    pattern = "*",
-    --    callback = function()
-    --        self:leave()
-    --    end
-    --})
 end
 
 ---Register mapping to submode
