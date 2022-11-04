@@ -35,6 +35,7 @@ submode = {
     submode_to_map_escape = {},
 }
 
+---Initialize submode.nvim
 function submode:setup()
     -- Create autocommand to exit submode when
     -- parent mode is changed
@@ -57,31 +58,45 @@ end
 ---@param info SubmodeInfo
 ---Infomation of this submode
 function submode:create(name, info)
+    vim.validate{
+        name = { name, "string" },
+        info = { info, "table" },
+    }
+
     self.submode_to_info[name] = info
 
-    if type(info.enter) == "string" then
-        vim.keymap.set(info.mode, info.enter, function() self:enter(name) end)
-    else
-        for _, enter in pairs(info.enter) do
-            vim.keymap.set(info.mode, enter, function() self:enter(name) end)
+    utils.match(type(info.enter), {
+        ["string"] = function()
+            vim.keymap.set(info.mode, info.enter, function() self:enter(name) end)
+        end,
+        ["table"] = function()
+            for _, enter in pairs(info.enter) do
+                vim.keymap.set(info.mode, enter, function() self:enter(name) end)
+            end
         end
-    end
+    }, function()
+        error("SubmodeInfo.enter must be string or string[]: got " .. type(info.enter))
+    end)
 
     -- NOTE: To register leave key as a mapping of this submode,
     --       I prevent key confliction (e.g. Register <ESC> as leave key when parent is insert mode)
-    if type(info.leave) == "string" then
-        self:register(name, {
-            lhs = info.leave,
-            rhs = function() self:leave() end,
-        })
-    else
-        for _, leave in pairs(info.leave) do
+    utils.match(type(info.leave), {
+        ["string"] = function()
             self:register(name, {
-                lhs = leave,
+                lhs = info.leave,
                 rhs = function() self:leave() end,
             })
+        end,
+        ["table"] = function()
+            for _, leave in pairs(info.leave) do
+                self:register(name, {
+                    lhs = leave,
+                    rhs = function() self:leave() end,
+                })
+            end
         end
-    end
+    }, function()
+    end)
 end
 
 ---Register mapping to submode
@@ -92,6 +107,11 @@ end
 ---@param map SubmodeMapping
 ---Mapping to register
 function submode:register(name, map)
+    vim.validate{
+        name = { name, "string" },
+        map = { map, "table" },
+    }
+
     self.submode_to_mappings[name] = self.submode_to_mappings[name] or {}
     map.opts = map.opts or {}
     table.insert(self.submode_to_mappings[name], map)
@@ -113,6 +133,10 @@ end
 ---@param name string
 ---Name of submode to enter
 function submode:enter(name)
+    vim.validate{
+        name = { name, "string" },
+    }
+
     if self.current_mode ~= "" then
         self:leave()
     end
