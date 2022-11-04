@@ -64,7 +64,7 @@ If you want, you can register leave key instead add key to {leave} of create.
         lhs = "keys-to-leave-from-this-submode",
         rhs = function()
             -- processes to do before exit this submode
-            self:leave()
+            submode:leave()
         end
     })
 <
