@@ -42,7 +42,8 @@ Then, create mode
     submode:create("name-of-submode", {
         mode = "parent-mode",
         enter = "keys-to-enter-this-submode",
-        leave = "keys-to-leave-from-this-submode",
+        leave = "keys-to-leave-from-this-submode", -- this is optional
+                                                   -- see below
         --enter = { "key1", "key2", ... } -- you can pass multiple key
         --leave = { "key1", "key2", ... } 
     })
@@ -55,6 +56,16 @@ Finally, register mappings to submode
         --rhs = function() --[[you can pass lua function]] end
         --opt = {} -- also, you can pass opt which vim.keymap.set can recieve
                    -- This is optional
+    })
+<
+If you want, you can register leave key instead add key to {leave} of create.
+>
+    submode:register("name-of-submode", {
+        lhs = "keys-to-leave-from-this-submode",
+        rhs = function()
+            -- processes to do before exit this submode
+            self:leave()
+        end
     })
 <
 You can exit from submode by pressing registered leave key, or simply change
