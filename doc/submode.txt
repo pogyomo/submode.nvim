@@ -87,19 +87,19 @@ Methods                                                      *submode-methods*
 You can call these methods either submode:method(param...) or
 submode.method(submode, param...).
 
-setup({submode})                                                     *setup()*
+setup({submode})                                             *submode.setup()*
     Initialize this plugin.
 
-    Parameters:
+    Parameters: ~
         {submode} Submode instance that require("submode") returns.
 
-    Return:
+    Return: ~
         nil
 
-create({submode}, {name} [, {info}])                                *create()*
+create({submode}, {name} [, {info}])                        *submode.create()*
     Create a new submode.
 
-    Parameters:
+    Parameters: ~
         {submode} Submode instance that require("submode") returns.
         {name}    (string) Name of submode.
         {info}    Infomation of this submode with following keys.
@@ -108,13 +108,13 @@ create({submode}, {name} [, {info}])                                *create()*
                   - leave (string | string[]) optional: keymaps to leave from
                   this submode.
 
-    Return:
+    Return: ~
         nil
 
-register({submode}, {name}, {map} [, {opt}])                      *register()*
+register({submode}, {name}, {map} [, {opt}])              *submode.register()*
     Register mapping to submode.
 
-    Parameters:
+    Parameters: ~
         {submode} Submode instance that require("submode") returns.
         {name}    (string) Name of submode.
         {map}     Mapping infomation to register with following keys.
@@ -123,35 +123,35 @@ register({submode}, {name}, {map} [, {opt}])                      *register()*
                   - opt (table) optional: Options of this keymap. See {opts}
                   of |vim.keymap.set()|.
 
-    Return:
+    Return: ~
         nil
 
-enter({submode}, {name})                                             *enter()*
+enter({submode}, {name})                                     *submode.enter()*
     Enter the submode.
 
-    Parameters:
+    Parameters: ~
         {submode} Submode instance that require("submode") returns.
         {name}    (string) Name of submode.
 
-    Return:
+    Return: ~
         nil
 
-leave({submode})                                                     *leave()*
+leave({submode})                                             *submode.leave()*
     Leave from current submode.
 
-    Parameters:
+    Parameters: ~
         {submode} Submode instance that require("submode") returns.
 
-    Return:
+    Return: ~
         nil
 
-mode({submode})                                                       *mode()*
+mode({submode})                                               *submode.mode()*
     Get current submode's name is possible.
 
-    Parameters:
+    Parameters: ~
         {submode} Submode instance that require("submode") returns.
 
-    Return:
+    Return: ~
         string, or nil if not in submode.
 
 vim:tw=78:ts=8:ft=help:norl:noet:
