@@ -146,7 +146,7 @@ leave({submode})                                             *submode.leave()*
         nil
 
 mode({submode})                                               *submode.mode()*
-    Get current submode's name is possible.
+    Get current submode's name if possible.
 
     Parameters: ~
         {submode} Submode instance that require("submode") returns.
