@@ -137,12 +137,39 @@ function submode:enter(name)
         name = { name, "string" },
     }
 
+    -- Validate that current mode and submode's parent mode is same
+    -- TODO: Support 'l' as parent mode
+    local parent = self.submode_to_info[name].mode
+    local parent_is_same = utils.match(parent, {
+        ["n"] = utils.is_normal_mode,
+        ["v"] = function()
+            return utils.is_visual_mode() or utils.is_select_mode()
+        end,
+        ["o"] = utils.is_o_pending_mode,
+        ["i"] = utils.is_insert_mode,
+        ["c"] = utils.is_cmdline_mode,
+        ["s"] = utils.is_select_mode,
+        ["x"] = utils.is_visual_mode,
+        ["l"] = function()
+            error("Currently submode.nvim dosen't accept 'l' as parent mode")
+        end,
+        ["t"] = utils.is_terminal_mode,
+        [""]  = function()
+            return utils.is_normal_mode() or utils.is_visual_mode() or utils.is_o_pending_mode()
+        end
+    }, function()
+        error(string.format("Parent of the submode %s is invalid: %s", name, parent))
+    end)
+    if not parent_is_same then
+        return
+    end
+
+    -- If in another submode, leave from the submode
     if self.current_mode ~= "" then
         self:leave()
     end
 
     -- Register mappings
-    local parent = self.submode_to_info[name].mode
     self.submode_to_map_escape[name] = {}
     for _, map in pairs(self.submode_to_mappings[name] or {}) do
         self.submode_to_map_escape[name] = utils.save(parent, map.lhs, self.submode_to_map_escape[name])
