@@ -127,7 +127,8 @@ register({submode}, {name}, {map} [, {opt}])              *submode.register()*
         nil
 
 enter({submode}, {name})                                     *submode.enter()*
-    Enter the submode.
+    Enter the submode. This function only success if parent mode of the
+    submode is same as current mode.
 
     Parameters: ~
         {submode} Submode instance that require("submode") returns.
