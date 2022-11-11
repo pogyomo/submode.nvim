@@ -33,7 +33,7 @@ local utils = require("submode.utils")
 
 ---@type Submode
 ---@diagnostic disable-next-line
-submode = {
+local M = {
     current_mode = "",
     submode_to_info = {},
     submode_to_mappings = {},
@@ -43,7 +43,7 @@ submode = {
 ---Initialize submode.nvim
 ---
 ---@param config? SubmodeSetupConfig
-function submode:setup(config)
+function M:setup(config)
     config = config or {}
     if config.leave_when_mode_changed == nil then
         config.leave_when_mode_changed = true
@@ -71,7 +71,7 @@ end
 ---
 ---@param info SubmodeInfo
 ---Infomation of this submode
-function submode:create(name, info)
+function M:create(name, info)
     vim.validate{
         name = { name, "string" },
         info = { info, "table" },
@@ -120,7 +120,7 @@ end
 ---
 ---@param map SubmodeMapping
 ---Mapping to register
-function submode:register(name, map)
+function M:register(name, map)
     vim.validate{
         name = { name, "string" },
         map = { map, "table" },
@@ -135,12 +135,12 @@ end
 ---or submode's parent is not same as current mode
 ---
 ---@return string | nil
-function submode:mode()
+function M:mode()
     if self.current_mode == "" then
         return nil
     end
 
-    local parent_is_same = utils:is_parent_same(self.current_mode)
+    local parent_is_same = utils:is_parent_same(self, self.current_mode)
     if parent_is_same then
         return self.current_mode
     else
@@ -152,13 +152,13 @@ end
 ---
 ---@param name string
 ---Name of submode to enter
-function submode:enter(name)
+function M:enter(name)
     vim.validate{
         name = { name, "string" },
     }
 
     -- Validate that current mode and submode's parent mode is same
-    local parent_is_same = utils:is_parent_same(name)
+    local parent_is_same = utils:is_parent_same(self, name)
     if not parent_is_same then
         return
     end
@@ -180,7 +180,7 @@ function submode:enter(name)
 end
 
 ---Leave from current submode
-function submode:leave()
+function M:leave()
     if self.current_mode == "" then
         return
     end
@@ -196,4 +196,4 @@ function submode:leave()
     self.current_mode = ""
 end
 
-return setmetatable({}, { __index = submode })
+return M

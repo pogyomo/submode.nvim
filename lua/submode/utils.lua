@@ -92,10 +92,11 @@ function M.is_terminal_mode()
     return string.find(vim.fn.mode(1), "^t") ~= nil
 end
 
+---@param submode Submode
 ---@param name string
 ---Name of submode
 ---Whether current mode and given submode's parent is same or not
-function M:is_parent_same(name)
+function M:is_parent_same(submode, name)
     local parent = submode.submode_to_info[name].mode
     return self.match(parent, {
         ["n"] = self.is_normal_mode,
