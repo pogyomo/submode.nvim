@@ -92,4 +92,32 @@ function M.is_terminal_mode()
     return string.find(vim.fn.mode(1), "^t") ~= nil
 end
 
+---@param name string
+---Name of submode
+---Whether current mode and given submode's parent is same or not
+function M:is_parent_same(name)
+    local parent = submode.submode_to_info[name].mode
+    return self.match(parent, {
+        ["n"] = self.is_normal_mode,
+        ["v"] = function()
+            return self.is_visual_mode() or self.is_select_mode()
+        end,
+        ["o"] = self.is_o_pending_mode,
+        ["i"] = self.is_insert_mode,
+        ["c"] = self.is_cmdline_mode,
+        ["s"] = self.is_select_mode,
+        ["x"] = self.is_visual_mode,
+        -- TODO: Support 'l' as parent mode
+        ["l"] = function()
+            error("Currently submode.nvim dosen't accept 'l' as parent mode")
+        end,
+        ["t"] = self.is_terminal_mode,
+        [""]  = function()
+            return self.is_normal_mode() or self.is_visual_mode() or self.is_o_pending_mode()
+        end
+    }, function()
+        error(string.format("Parent of the submode %s is invalid: %s", name, parent))
+    end)
+end
+
 return M

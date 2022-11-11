@@ -26,6 +26,11 @@ local utils = require("submode.utils")
 ---@field rhs string | function
 ---@field opts? table
 
+---@class SubmodeSetupConfig
+---
+---@field leave_when_mode_changed boolean
+---Leave from submode when parent mode is changed
+
 ---@type Submode
 ---@diagnostic disable-next-line
 submode = {
@@ -36,18 +41,27 @@ submode = {
 }
 
 ---Initialize submode.nvim
-function submode:setup()
+---
+---@param config? SubmodeSetupConfig
+function submode:setup(config)
+    config = config or {}
+    if config.leave_when_mode_changed == nil then
+        config.leave_when_mode_changed = true
+    end
+
     -- Create autocommand to exit submode when
     -- parent mode is changed
-    local name = "submode_augroup"
-    vim.api.nvim_create_augroup(name, {})
-    vim.api.nvim_create_autocmd("ModeChanged", {
-        group = name,
-        pattern = "*",
-        callback = function()
-            self:leave()
-        end
-    })
+    if config.leave_when_mode_changed then
+        local name = "submode_augroup"
+        vim.api.nvim_create_augroup(name, {})
+        vim.api.nvim_create_autocmd("ModeChanged", {
+            group = name,
+            pattern = "*",
+            callback = function()
+                self:leave()
+            end
+        })
+    end
 end
 
 ---Create a new submode
@@ -117,14 +131,20 @@ function submode:register(name, map)
     table.insert(self.submode_to_mappings[name], map)
 end
 
----Return current mode, or nil if not in submode
+---Return current submode, or nil if not in submode
+---or submode's parent is not same as current mode
 ---
 ---@return string | nil
 function submode:mode()
     if self.current_mode == "" then
         return nil
-    else
+    end
+
+    local parent_is_same = utils:is_parent_same(self.current_mode)
+    if parent_is_same then
         return self.current_mode
+    else
+        return nil
     end
 end
 
@@ -138,28 +158,7 @@ function submode:enter(name)
     }
 
     -- Validate that current mode and submode's parent mode is same
-    -- TODO: Support 'l' as parent mode
-    local parent = self.submode_to_info[name].mode
-    local parent_is_same = utils.match(parent, {
-        ["n"] = utils.is_normal_mode,
-        ["v"] = function()
-            return utils.is_visual_mode() or utils.is_select_mode()
-        end,
-        ["o"] = utils.is_o_pending_mode,
-        ["i"] = utils.is_insert_mode,
-        ["c"] = utils.is_cmdline_mode,
-        ["s"] = utils.is_select_mode,
-        ["x"] = utils.is_visual_mode,
-        ["l"] = function()
-            error("Currently submode.nvim dosen't accept 'l' as parent mode")
-        end,
-        ["t"] = utils.is_terminal_mode,
-        [""]  = function()
-            return utils.is_normal_mode() or utils.is_visual_mode() or utils.is_o_pending_mode()
-        end
-    }, function()
-        error(string.format("Parent of the submode %s is invalid: %s", name, parent))
-    end)
+    local parent_is_same = utils:is_parent_same(name)
     if not parent_is_same then
         return
     end
@@ -170,6 +169,7 @@ function submode:enter(name)
     end
 
     -- Register mappings
+    local parent = self.submode_to_info[name].mode
     self.submode_to_map_escape[name] = {}
     for _, map in pairs(self.submode_to_mappings[name] or {}) do
         self.submode_to_map_escape[name] = utils.save(parent, map.lhs, self.submode_to_map_escape[name])
