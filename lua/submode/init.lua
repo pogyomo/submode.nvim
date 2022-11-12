@@ -32,8 +32,7 @@ local saver = require("submode.saver")
 ---@field leave_when_mode_changed boolean
 ---Leave from submode when parent mode is changed
 
----@type Submode
----@diagnostic disable-next-line
+---@class Submode
 local M = {
     current_mode = "",
     submode_to_info = {},
@@ -97,6 +96,7 @@ function M:create(name, info)
     utils.match(type(info.leave), {
         ["string"] = function()
             self:register(name, {
+                ---@diagnostic disable-next-line
                 lhs = info.leave,
                 rhs = function() self:leave() end,
             })
