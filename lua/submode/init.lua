@@ -17,8 +17,8 @@ local utils = require("submode.utils")
 ---@class SubmodeInfo
 ---
 ---@field mode string
----@field enter string | string[]
----@field leave string | string[]
+---@field enter? string | string[]
+---@field leave? string | string[]
 
 ---@class SubmodeMapping
 ---
@@ -89,7 +89,6 @@ function M:create(name, info)
             end
         end
     }, function()
-        error("SubmodeInfo.enter must be string or string[]: got " .. type(info.enter))
     end)
 
     -- NOTE: To register leave key as a mapping of this submode,
