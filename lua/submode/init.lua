@@ -46,7 +46,7 @@ local M = {
 function M:setup(config)
     config = config or {}
     if config.leave_when_mode_changed == nil then
-        config.leave_when_mode_changed = true
+        config.leave_when_mode_changed = false
     end
 
     -- Create autocommand to exit submode when

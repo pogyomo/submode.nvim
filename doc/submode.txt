@@ -50,7 +50,12 @@ Usage                                                          *submode-usage*
 At first, import submode and call setup function once.
 >
     local submode = require("submode")
+    -- simply call setup
     submode:setup()
+    -- you can pass config
+    --submode:setup{
+    --    leave_when_mode_changed = true
+    --}
 <
 Then, create mode
 >
@@ -84,7 +89,7 @@ If you want, you can register leave key instead add key to {leave} of create.
     })
 <
 You can exit from submode by pressing registered leave key, or simply change
-parent mode (e.g. Parent mode is insert mode -> press ':')
+parent mode (if leave_when_mode_changed is true).
 
 Also, you can enter submode by calling |enter()| method with the name of
 submode.
@@ -109,7 +114,7 @@ setup({submode} [, {config}])                                *submode.setup()*
         {config}  Config of the submode with following keys.
                   - leave_when_mode_changed (boolean): Whether leave from
                   current submode or not when mode is changed. Default is
-                  true.
+                  false.
 
     Return: ~
         nil
