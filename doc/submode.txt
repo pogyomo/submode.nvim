@@ -108,12 +108,13 @@ setup({submode} [, {config}])                                *submode.setup()*
         {submode} Submode instance that require("submode") returns.
         {config}  Config of the submode with following keys.
                   - leave_when_mode_changed (boolean): Whether leave from
-                  current submode or not when mode is changed.
+                  current submode or not when mode is changed. Default is
+                  true.
 
     Return: ~
         nil
 
-create({submode}, {name} [, {info}])                        *submode.create()*
+create({submode}, {name} , {info})                        *submode.create()*
     Create a new submode.
 
     Parameters: ~
@@ -121,7 +122,8 @@ create({submode}, {name} [, {info}])                        *submode.create()*
         {name}    (string) Name of submode.
         {info}    Infomation of this submode with following keys.
                   - mode (string): Parent mode. See {mode} of |maparg()|
-                  - enter (string | string[]): keymaps to enter this submode.
+                  - enter (string | string[]) optional: keymaps to enter this
+                  submode.
                   - leave (string | string[]) optional: keymaps to leave from
                   this submode.
 
@@ -137,7 +139,7 @@ register({submode}, {name}, {map} [, {opt}])              *submode.register()*
         {map}     Mapping infomation to register with following keys.
                   - lhs (string): key to enter this submode.
                   - rhs (string | function): 
-                  - opt (table) optional: Options of this keymap. See {opts}
+        {opt}     (table) optional: Options of this keymap. See {opts}
                   of |vim.keymap.set()|.
 
     Return: ~
