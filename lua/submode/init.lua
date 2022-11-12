@@ -1,4 +1,5 @@
 local utils = require("submode.utils")
+local saver = require("submode.saver")
 
 ---@class Submode
 ---
@@ -11,8 +12,8 @@ local utils = require("submode.utils")
 ---@field submode_to_mappings table<string, SubmodeMapping[]>
 ---Mappings of the submode
 ---
----@field submode_to_map_escape table<string, MappingInfo[]>
----Mappings that will be saved while in the submode
+---@field mapping_saver MappingSaver
+---Mapping saver
 
 ---@class SubmodeInfo
 ---
@@ -37,7 +38,7 @@ local M = {
     current_mode = "",
     submode_to_info = {},
     submode_to_mappings = {},
-    submode_to_map_escape = {},
+    mapping_saver = saver,
 }
 
 ---Initialize submode.nvim
@@ -169,9 +170,8 @@ function M:enter(name)
 
     -- Register mappings
     local parent = self.submode_to_info[name].mode
-    self.submode_to_map_escape[name] = {}
     for _, map in pairs(self.submode_to_mappings[name] or {}) do
-        self.submode_to_map_escape[name] = utils.save(parent, map.lhs, self.submode_to_map_escape[name])
+        self.mapping_saver:save(parent, map.lhs)
         vim.keymap.set(parent, map.lhs, map.rhs, map.opts)
     end
 
@@ -190,7 +190,7 @@ function M:leave()
         vim.keymap.del(parent, map.lhs)
     end
 
-    utils.restore(self.submode_to_map_escape[self.current_mode])
+    self.mapping_saver:restore()
 
     self.current_mode = ""
 end
