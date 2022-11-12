@@ -6,8 +6,9 @@ Table of Contents                                  *submode-table-of-contents*
 1. Before start                                         |submode-before-start|
 2. Requirement                                           |submode-requirement|
 3. Introduction						|submode-introduction|
-4. Usage                                                       |submode-usage|
-5. Methods                                                   |submode-methods|
+4. Installation                                         |submode-installation|
+5. Usage                                                       |submode-usage|
+6. Methods                                                   |submode-methods|
 
 ==============================================================================
 Before start                                            *submode-before-start*
@@ -30,6 +31,19 @@ I thought it is so convenient if I can change some key mappings with one
 (or more) keys like we change mode. This plugin maybe good for someone who
 thought similar things before.
 
+==============================================================================
+Installation                                            *submode-installation*
+
+Use your favorite plugin manager.
+
+vim-plug ~
+>
+    Plug "pogyomo/submode.nvim"
+<
+packer.nvim ~
+>
+    use("pogyomo/submode.nvim")
+<
 ==============================================================================
 Usage                                                          *submode-usage*
 
