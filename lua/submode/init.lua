@@ -1,5 +1,6 @@
 local utils = require("submode.utils")
 local saver = require("submode.saver")
+local mode  = require("submode.mode")
 
 ---@class Submode
 ---
@@ -79,12 +80,12 @@ function M:create(name, info)
 
     self.submode_to_info[name] = info
 
-    utils.match(type(info.enter), {
+    utils.switch(type(info.enter), {
         ["string"] = function()
             vim.keymap.set(info.mode, info.enter, function() self:enter(name) end)
         end,
         ["table"] = function()
-            for _, enter in pairs(info.enter) do
+            for _, enter in pairs(info.enter --[=[@as string[]]=]) do
                 vim.keymap.set(info.mode, enter, function() self:enter(name) end)
             end
         end
@@ -93,16 +94,15 @@ function M:create(name, info)
 
     -- NOTE: To register leave key as a mapping of this submode,
     --       I prevent key confliction (e.g. Register <ESC> as leave key when parent is insert mode)
-    utils.match(type(info.leave), {
+    utils.switch(type(info.leave), {
         ["string"] = function()
             self:register(name, {
-                ---@diagnostic disable-next-line
-                lhs = info.leave,
+                lhs = info.leave --[[@as string]],
                 rhs = function() self:leave() end,
             })
         end,
         ["table"] = function()
-            for _, leave in pairs(info.leave) do
+            for _, leave in pairs(info.leave --[=[@as string[]]=]) do
                 self:register(name, {
                     lhs = leave,
                     rhs = function() self:leave() end,
@@ -140,7 +140,7 @@ function M:mode()
         return nil
     end
 
-    local parent_is_same = utils:is_parent_same(self, self.current_mode)
+    local parent_is_same = mode:is_parent_same(self, self.current_mode)
     if parent_is_same then
         return self.current_mode
     else
@@ -158,7 +158,7 @@ function M:enter(name)
     }
 
     -- Validate that current mode and submode's parent mode is same
-    local parent_is_same = utils:is_parent_same(self, name)
+    local parent_is_same = mode:is_parent_same(self, name)
     if not parent_is_same then
         return
     end
