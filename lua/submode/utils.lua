@@ -22,13 +22,13 @@ end
 ---@generic T
 ---@param target T
 ---@param map table<T, function>
----@param default function
+---@param default? function
 function M.switch(target, map, default)
     local func = map[target]
-    if func == nil then
-        default()
-    else
+    if func ~= nil then
         func()
+    elseif default ~= nil then
+        default()
     end
 end
 

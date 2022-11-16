@@ -89,8 +89,7 @@ function M:create(name, info)
                 vim.keymap.set(info.mode, enter, function() self:enter(name) end)
             end
         end
-    }, function()
-    end)
+    })
 
     -- NOTE: To register leave key as a mapping of this submode,
     --       I prevent key confliction (e.g. Register <ESC> as leave key when parent is insert mode)
@@ -109,8 +108,7 @@ function M:create(name, info)
                 })
             end
         end
-    }, function()
-    end)
+    })
 end
 
 ---Register mapping to submode
