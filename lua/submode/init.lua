@@ -38,7 +38,7 @@ local M = {
     current_mode = "",
     submode_to_info = {},
     submode_to_mappings = {},
-    mapping_saver = saver,
+    mapping_saver = saver:new(),
 }
 
 ---Initialize submode.nvim

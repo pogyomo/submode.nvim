@@ -12,9 +12,16 @@
 ---Dictionary that maparg returns
 
 ---@class MappingSaver
-local M = {
-    info_list = {}
-}
+local M = {}
+
+---Create new saver
+function M:new()
+    return setmetatable({
+        info_list = {},
+    }, {
+        __index = self,
+    })
+end
 
 ---Save current mapping using given info
 ---
@@ -35,6 +42,7 @@ function M:restore()
     for _, info in pairs(self.info_list) do
         vim.fn.mapset(info.mode, false, info.dict)
     end
+    vim.notify(vim.inspect(self.info_list))
     self.info_list = {}
 end
 
