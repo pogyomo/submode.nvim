@@ -42,7 +42,6 @@ function M:restore()
     for _, info in pairs(self.info_list) do
         vim.fn.mapset(info.mode, false, info.dict)
     end
-    vim.notify(vim.inspect(self.info_list))
     self.info_list = {}
 end
 
