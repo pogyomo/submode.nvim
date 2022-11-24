@@ -1,15 +1,9 @@
 ---@class MappingSaver
----
----@field info_list MappingInfo[]
----Infomation of preserved mappings
+---@field info_list MappingInfo[] Infomation of preserved mappings.
 
 ---@class MappingInfo
----
----@field mode string
----Name of target mode
----
----@field dict table
----Dictionary that maparg returns
+---@field mode string Name of target mode.
+---@field dict table Dictionary that maparg returns.
 
 ---@class MappingSaver
 local M = {}
@@ -23,13 +17,9 @@ function M:new()
     })
 end
 
----Save current mapping using given info
----
----@param mode string
----Name of target mode
----
----@param name string
----Lhs of target keymap
+---Save current mapping using given info.
+---@param mode string Name of target mode.
+---@param name string Lhs of target keymap.
 function M:save(mode, name)
     local dict = vim.fn.maparg(name, mode, false, true)
     if next(dict) ~= nil then

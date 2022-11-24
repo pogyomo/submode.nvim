@@ -3,35 +3,23 @@ local saver = require("submode.saver")
 local mode  = require("submode.mode")
 
 ---@class Submode
----
----@field current_mode string
----Represent current mode, or empty string if not in submode.
----
----@field submode_to_info table<string, SubmodeInfo>
----Infomation of the submode
----
----@field submode_to_mappings table<string, SubmodeMapping[]>
----Mappings of the submode
----
----@field mapping_saver MappingSaver
----Mapping saver
+---@field current_mode string Represent current mode, or empty string if not in submode.
+---@field submode_to_info table<string, SubmodeInfo> Infomation of the submode.
+---@field submode_to_mappings table<string, SubmodeMapping[]> Mappings of the submode.
+---@field mapping_saver MappingSaver Mapping saver.
 
 ---@class SubmodeInfo
----
 ---@field mode string
 ---@field enter? string | string[]
 ---@field leave? string | string[]
 
 ---@class SubmodeMapping
----
 ---@field lhs string
 ---@field rhs string | function
 ---@field opts? table
 
 ---@class SubmodeSetupConfig
----
----@field leave_when_mode_changed boolean
----Leave from submode when parent mode is changed
+---@field leave_when_mode_changed boolean Leave from submode when parent mode is changed.
 
 ---@class Submode
 local M = {
@@ -42,7 +30,6 @@ local M = {
 }
 
 ---Initialize submode.nvim
----
 ---@param config? SubmodeSetupConfig
 function M:setup(config)
     config = config or {}
@@ -65,13 +52,9 @@ function M:setup(config)
     end
 end
 
----Create a new submode
----
----@param name string
----Name of this submode
----
----@param info SubmodeInfo
----Infomation of this submode
+---Create a new submode.
+---@param name string Name of this submode.
+---@param info SubmodeInfo Infomation of this submode.
 function M:create(name, info)
     vim.validate{
         name = { name, "string" },
@@ -111,13 +94,9 @@ function M:create(name, info)
     })
 end
 
----Register mapping to submode
----
----@param name string
----Name of target submode
----
----@param map SubmodeMapping
----Mapping to register
+---Register mapping to submode.
+---@param name string Name of target submode.
+---@param map SubmodeMapping Mapping to register.
 function M:register(name, map)
     vim.validate{
         name = { name, "string" },
@@ -130,8 +109,7 @@ function M:register(name, map)
 end
 
 ---Return current submode, or nil if not in submode
----or submode's parent is not same as current mode
----
+---or submode's parent is not same as current mode.
 ---@return string | nil
 function M:mode()
     if self.current_mode == "" then
@@ -146,10 +124,8 @@ function M:mode()
     end
 end
 
----Enter the submode
----
----@param name string
----Name of submode to enter
+---Enter the submode.
+---@param name string Name of submode to enter.
 function M:enter(name)
     vim.validate{
         name = { name, "string" },
@@ -176,7 +152,7 @@ function M:enter(name)
     self.current_mode = name
 end
 
----Leave from current submode
+---Leave from current submode.
 function M:leave()
     if self.current_mode == "" then
         return
