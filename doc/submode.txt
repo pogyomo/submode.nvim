@@ -37,18 +37,18 @@ Installation                                            *submode-installation*
 Use your favorite plugin manager.
 
 vim-plug ~
->
+>lua
     Plug "pogyomo/submode.nvim"
 <
 packer.nvim ~
->
+>lua
     use("pogyomo/submode.nvim")
 <
 ==============================================================================
 Usage                                                          *submode-usage*
 
 At first, import submode and call setup function once.
->
+>lua
     local submode = require("submode")
     -- simply call setup
     submode:setup()
@@ -58,7 +58,7 @@ At first, import submode and call setup function once.
     --}
 <
 Then, create mode
->
+>lua
     submode:create("name-of-submode", {
         mode = "parent-mode",
         enter = "keys-to-enter-this-submode",
@@ -69,7 +69,7 @@ Then, create mode
     })
 <
 Finally, register mappings to submode
->
+>lua
     submode:register("name-of-submode", {
         lhs = "keys-to-register",
         rhs = "behavior-of-this-mapping",
@@ -79,7 +79,7 @@ Finally, register mappings to submode
     })
 <
 If you want, you can register leave key instead add key to {leave} of create.
->
+>lua
     submode:register("name-of-submode", {
         lhs = "keys-to-leave-from-this-submode",
         rhs = function()
@@ -96,7 +96,7 @@ submode.
 
 If you want to show current submode to statusline, you can get current
 submode's name via mode method
->
+>lua
     submode:mode() -- This will return current submode's name, or nil if not
                    -- in submode
 <
