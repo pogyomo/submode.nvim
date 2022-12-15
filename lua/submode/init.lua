@@ -96,16 +96,17 @@ end
 
 ---Register mapping to submode.
 ---@param name string Name of target submode.
----@param map SubmodeMapping Mapping to register.
-function M:register(name, map)
+---@param ... SubmodeMapping Mappings to register.
+function M:register(name, ...)
     vim.validate{
         name = { name, "string" },
-        map = { map, "table" },
     }
 
-    self.submode_to_mappings[name] = self.submode_to_mappings[name] or {}
-    map.opts = map.opts or {}
-    table.insert(self.submode_to_mappings[name], map)
+    for _, map in ipairs{ ... } do
+        self.submode_to_mappings[name] = self.submode_to_mappings[name] or {}
+        map.opts = map.opts or {}
+        table.insert(self.submode_to_mappings[name], map)
+    end
 end
 
 ---Return current submode, or nil if not in submode

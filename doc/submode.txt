@@ -135,7 +135,7 @@ create({submode}, {name} , {info})                        *submode.create()*
     Return: ~
         nil
 
-register({submode}, {name}, {map} [, {opt}])              *submode.register()*
+register({submode}, {name}, {map} ...)                    *submode.register()*
     Register mapping to submode.
 
     Parameters: ~
@@ -143,9 +143,9 @@ register({submode}, {name}, {map} [, {opt}])              *submode.register()*
         {name}    (string) Name of submode.
         {map}     Mapping infomation to register with following keys.
                   - lhs (string): key to enter this submode.
-                  - rhs (string | function): 
-        {opt}     (table) optional: Options of this keymap. See {opts}
-                  of |vim.keymap.set()|.
+                  - rhs (string | function): Behavior of this keymap.
+                  - opts (table): Options of this keymap. See {opts} of
+                  |vim.keymap.set()|.
 
     Return: ~
         nil
