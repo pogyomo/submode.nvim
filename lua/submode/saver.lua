@@ -9,6 +9,7 @@
 local M = {}
 
 ---Create new saver
+---@return MappingSaver
 function M:new()
     return setmetatable({
         info_list = {},
