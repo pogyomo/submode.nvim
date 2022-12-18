@@ -21,6 +21,11 @@ local mode  = require("submode.mode")
 ---@class SubmodeSetupConfig
 ---@field leave_when_mode_changed boolean Leave from submode when parent mode is changed.
 
+---@class SubmodeSetupConfig
+local default = {
+    leave_when_mode_changed = false
+}
+
 ---@class Submode
 local M = {
     current_mode = "",
@@ -32,10 +37,7 @@ local M = {
 ---Initialize submode.nvim
 ---@param config? SubmodeSetupConfig
 function M:setup(config)
-    config = config or {}
-    if config.leave_when_mode_changed == nil then
-        config.leave_when_mode_changed = false
-    end
+    config = vim.tbl_extend("keep", config or {}, default)
 
     -- Create autocommand to exit submode when
     -- parent mode is changed
