@@ -57,7 +57,8 @@ end
 ---Create a new submode.
 ---@param name string Name of this submode.
 ---@param info SubmodeInfo Infomation of this submode.
-function M:create(name, info)
+---@param ...  SubmodeMapping Mappings to register to this submode.
+function M:create(name, info, ...)
     vim.validate{
         name = { name, "string" },
         info = { info, "table" },
@@ -94,6 +95,9 @@ function M:create(name, info)
             end
         end
     })
+
+    ---Register mappings.
+    self:register(name, ...)
 end
 
 ---Register mapping to submode.

@@ -1,11 +1,11 @@
-*submode.txt*					       create your own submode
+*submode.txt*                                          create your own submode
 
 ==============================================================================
 Table of Contents                                  *submode-table-of-contents*
 
 1. Before start                                         |submode-before-start|
 2. Requirement                                           |submode-requirement|
-3. Introduction						|submode-introduction|
+3. Introduction                                         |submode-introduction|
 4. Installation                                         |submode-installation|
 5. Usage                                                       |submode-usage|
 6. Methods                                                   |submode-methods|
@@ -119,7 +119,7 @@ setup({submode} [, {config}])                                *submode.setup()*
     Return: ~
         nil
 
-create({submode}, {name} , {info})                        *submode.create()*
+create({submode}, {name}, {info}, {map} ...)                *submode.create()*
     Create a new submode.
 
     Parameters: ~
@@ -131,6 +131,7 @@ create({submode}, {name} , {info})                        *submode.create()*
                   submode.
                   - leave (string | string[]) optional: keymaps to leave from
                   this submode.
+        {map}     Mapping infomations. Same {map} in |submode.register()|.
 
     Return: ~
         nil
