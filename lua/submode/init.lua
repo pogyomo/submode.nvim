@@ -51,12 +51,19 @@ end
 ---Validate config.
 ---@param config SubmodeSetupConfig Config to validate.
 local function validate_config(config)
-    if type(config.leave_when_mode_changed) ~= "boolean" then
-        error("'leave_when_mode_changed' must be boolean.")
-    end
-    if config.when_key_conflict ~= "error" and config.when_key_conflict ~= "override" then
-        error("'when_key_conflict' must be 'error' or 'override'.")
-    end
+    vim.validate{
+        leave_when_mode_changed = {
+            config.leave_when_mode_changed,
+            "boolean"
+        },
+        when_key_conflict = {
+            config.when_key_conflict,
+            function(str)
+                return str == "error" or str == "override"
+            end,
+            "error or override"
+        }
+    }
 end
 
 ---@class Submode
