@@ -30,6 +30,7 @@ local mode  = require("submode.mode")
 
 ---@class SubmodeSetupConfig
 ---@field leave_when_mode_changed boolean Leave from submode when parent mode is changed.
+---@field when_mapping_conflict "error" | "override" Behavior when mapping conflict.
 
 ---Convert SubmodeMappingPre to SubmodeMappings.
 ---This doesn't affect to map.rhs and map.opts.
@@ -58,20 +59,56 @@ local function validate_config(config)
         leave_when_mode_changed = {
             config.leave_when_mode_changed,
             "boolean"
+        },
+        when_mapping_conflict = {
+            config.when_mapping_conflict,
+            function(s)
+                return s == "error" or s == "override"
+            end,
+            "error or override"
         }
     }
 end
 
+---Default status of this plugin
 ---@class Submode
-local M = {
+local default_state = {
     current_mode = "",
     submode_to_info = {},
     submode_to_mappings = {},
     mapping_saver = saver:new(),
     config = {
         leave_when_mode_changed = false,
+        when_mapping_conflict = "error"
     }
 }
+
+---@class Submode
+local M = {}
+
+---Initialize this plugin's state.
+---All mappings and config will be lost.
+function M:__initialize_state()
+    for key, state in pairs(default_state) do
+        -- NOTE: If I don't use deepcopy, table is stored as reference.
+        --       I wan't to use default_state as constant table, but this may change
+        --       its contents. So, I prevent this problem by using deepcopy.
+        self[key] = vim.deepcopy(state)
+    end
+end
+
+---Detect mapping confliction.
+---@param name string Name of submode to check.
+---@param lhs string Lhs of the mapping.
+function M:__detect_mapping_confliction(name, lhs)
+    if not self.submode_to_mappings[name][lhs] then
+        return
+    end
+    if self.config.when_mapping_conflict == "error" then
+        local err_msg = "Mapping confliction detected in %s: %s is already defined."
+        error(err_msg:format(name, lhs))
+    end
+end
 
 ---Initialize submode.nvim
 ---@param config? SubmodeSetupConfig
@@ -79,6 +116,12 @@ function M:setup(config)
     vim.validate{
         config = { config, { "table", "nil" } }
     }
+
+    -- NOTE: I initialize internal state because if the settings of this plugin
+    --       is reloaded (i.e. PackerCompile) and when_mapping_conflict is error,
+    --       error occure. This happen because create or register called although
+    --       its settings is already exist. So this prevent the error.
+    self:__initialize_state()
 
     self.config = vim.tbl_extend("keep", config or {}, self.config)
     validate_config(self.config)
@@ -149,6 +192,8 @@ function M:register(name, ...)
                 actual_rhs = function() return element.rhs(lhs) end
             end
             element.opts = element.opts or {}
+
+            self:__detect_mapping_confliction(name, lhs)
             self.submode_to_mappings[name][lhs] = {
                 rhs  = actual_rhs,
                 opts = element.opts

@@ -115,6 +115,10 @@ setup({submode} [, {config}])                                *submode.setup()*
                   - leave_when_mode_changed (boolean): Whether leave from
                   current submode or not when mode is changed. Default is
                   false.
+                  - when_mapping_conflict (string): Behavior when mapping
+                  already exist. Accept following strings.
+                      - "error": Throw error. This is default.
+                      - "override": Override old mapping.
 
     Return: ~
         nil
