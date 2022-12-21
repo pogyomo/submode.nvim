@@ -5,13 +5,22 @@ local mode  = require("submode.mode")
 ---@class Submode
 ---@field current_mode string Represent current mode, or empty string if not in submode.
 ---@field submode_to_info table<string, SubmodeInfo> Infomation of the submode.
----@field submode_to_mappings table<string, SubmodeMapping[]> Mappings of the submode.
+---@field submode_to_mappings table<string, SubmodeMappings> Mappings of the submode.
 ---@field mapping_saver MappingSaver Mapping saver.
+---@field config SubmodeSetupConfig Config of this plugin.
 
 ---@class SubmodeInfo
 ---@field mode string
 ---@field enter? string | string[]
 ---@field leave? string | string[]
+
+---Combination of lhs and element.
+---@alias SubmodeMappings table<string, SubmodeMappingElement>
+
+---Infomation of mapping except lhs.
+---@class SubmodeMappingElement
+---@field rhs string | fun(lhs: string):string?
+---@field opts? table
 
 ---Mapping infomation which user pass.
 ---@class SubmodeMappingPre
@@ -19,35 +28,35 @@ local mode  = require("submode.mode")
 ---@field rhs string | fun(lha: string):string?
 ---@field opts? table
 
----Mapping infomation which this plugin use internally.
----@class SubmodeMapping
----@field lhs string
----@field rhs string | fun(lhs: string):string?
----@field opts? table
-
 ---@class SubmodeSetupConfig
 ---@field leave_when_mode_changed boolean Leave from submode when parent mode is changed.
+---@field when_key_conflict "error" | "override" What happen when key conflict.
 
----@class SubmodeSetupConfig
-local default = {
-    leave_when_mode_changed = false
-}
-
----Convert SubmodeMappingPre to list of SubmodeMapping.
+---Convert SubmodeMappingPre to SubmodeMappings.
 ---This doesn't affect to map.rhs and map.opts.
 ---@param map SubmodeMappingPre
----@return SubmodeMapping[]
-local function normalize_map_pre(map)
+---@return SubmodeMappings
+local function convert_map_pre_to_maps(map)
     local ret = {}
     local listlized_lhs = utils.listlize(map.lhs)
     for _, lhs in ipairs(listlized_lhs) do
-        table.insert(ret, {
-            lhs  = lhs,
+        ret[lhs] = {
             rhs  = map.rhs,
             opts = map.opts or {}
-        })
+        }
     end
     return ret
+end
+
+---Validate config.
+---@param config SubmodeSetupConfig Config to validate.
+local function validate_config(config)
+    if type(config.leave_when_mode_changed) ~= "boolean" then
+        error("'leave_when_mode_changed' must be boolean.")
+    end
+    if config.when_key_conflict ~= "error" and config.when_key_conflict ~= "override" then
+        error("'when_key_conflict' must be 'error' or 'override'.")
+    end
 end
 
 ---@class Submode
@@ -56,16 +65,21 @@ local M = {
     submode_to_info = {},
     submode_to_mappings = {},
     mapping_saver = saver:new(),
+    config = {
+        leave_when_mode_changed = false,
+        when_key_conflict = "error"
+    }
 }
 
 ---Initialize submode.nvim
 ---@param config? SubmodeSetupConfig
 function M:setup(config)
-    config = vim.tbl_extend("keep", config or {}, default)
+    self.config = vim.tbl_extend("keep", config or {}, self.config)
+    validate_config(self.config)
 
     -- Create autocommand to exit submode when
     -- parent mode is changed
-    if config.leave_when_mode_changed then
+    if self.config.leave_when_mode_changed then
         local name = "submode_augroup"
         vim.api.nvim_create_augroup(name, {})
         vim.api.nvim_create_autocmd("ModeChanged", {
@@ -119,20 +133,20 @@ function M:register(name, ...)
 
     self.submode_to_mappings[name] = self.submode_to_mappings[name] or {}
     for _, map_pre in ipairs{ ... } do
-        local normalized_maps = normalize_map_pre(map_pre)
-        for _, map in ipairs(normalized_maps) do
+        local maps = convert_map_pre_to_maps(map_pre)
+        for lhs, map in pairs(maps) do
             -- If rhs is function, call rhs with lhs.
             -- Also, I need add 'return' because
             -- returned string will be used if opts.expr is true.
             local actual_rhs = map.rhs
             if type(map.rhs) == "function" then
-                actual_rhs = function() return map.rhs(map.lhs) end
+                actual_rhs = function() return map.rhs(lhs) end
             end
-            table.insert(self.submode_to_mappings[name], {
-                lhs  = map.lhs,
+            self:__check_key_confliction(name, lhs)
+            self.submode_to_mappings[name][lhs] = {
                 rhs  = actual_rhs,
                 opts = map.opts
-            })
+            }
         end
     end
 end
@@ -173,9 +187,9 @@ function M:enter(name)
 
     -- Register mappings
     local parent = self.submode_to_info[name].mode
-    for _, map in pairs(self.submode_to_mappings[name] or {}) do
-        self.mapping_saver:save(parent, map.lhs)
-        vim.keymap.set(parent, map.lhs, map.rhs, map.opts)
+    for lhs, map in pairs(self.submode_to_mappings[name] or {}) do
+        self.mapping_saver:save(parent, lhs)
+        vim.keymap.set(parent, lhs, map.rhs, map.opts)
     end
 
     self.current_mode = name
@@ -189,13 +203,25 @@ function M:leave()
 
     -- Delete mappings
     local parent = self.submode_to_info[self.current_mode].mode
-    for _, map in pairs(self.submode_to_mappings[self.current_mode] or {}) do
-        vim.keymap.del(parent, map.lhs)
+    for lhs, _ in pairs(self.submode_to_mappings[self.current_mode] or {}) do
+        vim.keymap.del(parent, lhs)
     end
 
     self.mapping_saver:restore()
 
     self.current_mode = ""
+end
+
+---Check whether target keymap is defined or not.
+---@param name string Target submode.
+---@param lhs string Lhs of keymap to check.
+function M:__check_key_confliction(name, lhs)
+    if not self.submode_to_mappings[name][lhs] then
+        return
+    end
+    if self.config.when_key_conflict == "error" then
+        error(("Key confliction detected in %s: %s is already defined"):format(name, lhs))
+    end
 end
 
 return M

@@ -115,6 +115,10 @@ setup({submode} [, {config}])                                *submode.setup()*
                   - leave_when_mode_changed (boolean): Whether leave from
                   current submode or not when mode is changed. Default is
                   false.
+                  - whe_key_conflict (string): Behavior when the mapping
+                  already defined. Accept below strings.
+                      - "error": Cause error. This is default.
+                      - "override": Override old mapping.
 
     Return: ~
         nil
@@ -145,7 +149,7 @@ register({submode}, {name}, {map} ...)                    *submode.register()*
         {map}     Mapping infomation to register with following keys.
                   - lhs (string | string[]): keys to enter this submode.
                   - rhs (string | fun(lhs: string):string?): Behavior of this
-		  keymap.
+                  keymap.
                   - opts (table): Options of this keymap. See {opts} of
                   |vim.keymap.set()|.
 
