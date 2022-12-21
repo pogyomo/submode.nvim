@@ -30,7 +30,6 @@ local mode  = require("submode.mode")
 
 ---@class SubmodeSetupConfig
 ---@field leave_when_mode_changed boolean Leave from submode when parent mode is changed.
----@field when_key_conflict "error" | "override" What happen when key conflict.
 
 ---Convert SubmodeMappingPre to SubmodeMappings.
 ---This doesn't affect to map.rhs and map.opts.
@@ -55,13 +54,6 @@ local function validate_config(config)
         leave_when_mode_changed = {
             config.leave_when_mode_changed,
             "boolean"
-        },
-        when_key_conflict = {
-            config.when_key_conflict,
-            function(str)
-                return str == "error" or str == "override"
-            end,
-            "error or override"
         }
     }
 end
@@ -74,7 +66,6 @@ local M = {
     mapping_saver = saver:new(),
     config = {
         leave_when_mode_changed = false,
-        when_key_conflict = "error"
     }
 }
 
@@ -150,7 +141,6 @@ function M:register(name, ...)
                 actual_rhs = function() return element.rhs(lhs) end
             end
             element.opts = element.opts or {}
-            self:__check_key_confliction(name, lhs)
             self.submode_to_mappings[name][lhs] = {
                 rhs  = actual_rhs,
                 opts = element.opts
@@ -218,18 +208,6 @@ function M:leave()
     self.mapping_saver:restore()
 
     self.current_mode = ""
-end
-
----Check whether target keymap is defined or not.
----@param name string Target submode.
----@param lhs string Lhs of keymap to check.
-function M:__check_key_confliction(name, lhs)
-    if not self.submode_to_mappings[name][lhs] then
-        return
-    end
-    if self.config.when_key_conflict == "error" then
-        error(("Key confliction detected in %s: %s is already defined"):format(name, lhs))
-    end
 end
 
 return M
