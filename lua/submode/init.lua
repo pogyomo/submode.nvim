@@ -13,9 +13,16 @@ local mode  = require("submode.mode")
 ---@field enter? string | string[]
 ---@field leave? string | string[]
 
+---Mapping infomation which user pass.
+---@class SubmodeMappingPre
+---@field lhs string | string[]
+---@field rhs string | fun(lha: string):string?
+---@field opts? table
+
+---Mapping infomation which this plugin use internally.
 ---@class SubmodeMapping
 ---@field lhs string
----@field rhs string | function
+---@field rhs string | fun(lhs: string):string?
 ---@field opts? table
 
 ---@class SubmodeSetupConfig
@@ -25,6 +32,23 @@ local mode  = require("submode.mode")
 local default = {
     leave_when_mode_changed = false
 }
+
+---Convert SubmodeMappingPre to list of SubmodeMapping.
+---This doesn't affect to map.rhs and map.opts.
+---@param map SubmodeMappingPre
+---@return SubmodeMapping[]
+local function map_pre_normalize(map)
+    local ret = {}
+    local tablized_lhs = type(map.lhs) == "table" and map.lhs or { map.lhs }
+    for _, lhs in ipairs(tablized_lhs --[=[@as string[]]=]) do
+        table.insert(ret, {
+            lhs  = lhs,
+            rhs  = map.rhs,
+            opts = map.opts or {}
+        })
+    end
+    return ret
+end
 
 ---@class Submode
 local M = {
@@ -57,7 +81,7 @@ end
 ---Create a new submode.
 ---@param name string Name of this submode.
 ---@param info SubmodeInfo Infomation of this submode.
----@param ...  SubmodeMapping Mappings to register to this submode.
+---@param ...  SubmodeMappingPre Mappings to register to this submode.
 function M:create(name, info, ...)
     vim.validate{
         name = { name, "string" },
@@ -102,16 +126,29 @@ end
 
 ---Register mapping to submode.
 ---@param name string Name of target submode.
----@param ... SubmodeMapping Mappings to register.
+---@param ... SubmodeMappingPre Mappings to register.
 function M:register(name, ...)
     vim.validate{
         name = { name, "string" },
     }
 
-    for _, map in ipairs{ ... } do
-        self.submode_to_mappings[name] = self.submode_to_mappings[name] or {}
-        map.opts = map.opts or {}
-        table.insert(self.submode_to_mappings[name], map)
+    self.submode_to_mappings[name] = self.submode_to_mappings[name] or {}
+    for _, map_pre in ipairs{ ... } do
+        local normalized_maps = map_pre_normalize(map_pre)
+        for _, map in ipairs(normalized_maps) do
+            -- If rhs is function, call rhs with lhs.
+            -- Also, I need add 'return' because
+            -- returned string will be used if opts.expr is true.
+            local actual_rhs = map.rhs
+            if type(map.rhs) == "function" then
+                actual_rhs = function() return map.rhs(map.lhs) end
+            end
+            table.insert(self.submode_to_mappings[name], {
+                lhs  = map.lhs,
+                rhs  = actual_rhs,
+                opts = map.opts
+            })
+        end
     end
 end
 
