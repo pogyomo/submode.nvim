@@ -37,7 +37,7 @@ local default = {
 ---This doesn't affect to map.rhs and map.opts.
 ---@param map SubmodeMappingPre
 ---@return SubmodeMapping[]
-local function map_pre_normalize(map)
+local function normalize_map_pre(map)
     local ret = {}
     local tablized_lhs = type(map.lhs) == "table" and map.lhs or { map.lhs }
     for _, lhs in ipairs(tablized_lhs --[=[@as string[]]=]) do
@@ -134,7 +134,7 @@ function M:register(name, ...)
 
     self.submode_to_mappings[name] = self.submode_to_mappings[name] or {}
     for _, map_pre in ipairs{ ... } do
-        local normalized_maps = map_pre_normalize(map_pre)
+        local normalized_maps = normalize_map_pre(map_pre)
         for _, map in ipairs(normalized_maps) do
             -- If rhs is function, call rhs with lhs.
             -- Also, I need add 'return' because
