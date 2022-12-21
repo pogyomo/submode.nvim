@@ -42,7 +42,7 @@ local function convert_map_pre_to_maps(map)
     for _, lhs in ipairs(listlized_lhs) do
         ret[lhs] = {
             rhs  = map.rhs,
-            opts = map.opts or {}
+            opts = map.opts
         }
     end
     return ret
@@ -141,18 +141,19 @@ function M:register(name, ...)
     self.submode_to_mappings[name] = self.submode_to_mappings[name] or {}
     for _, map_pre in ipairs{ ... } do
         local maps = convert_map_pre_to_maps(map_pre)
-        for lhs, map in pairs(maps) do
+        for lhs, element in pairs(maps) do
             -- If rhs is function, call rhs with lhs.
             -- Also, I need add 'return' because
             -- returned string will be used if opts.expr is true.
-            local actual_rhs = map.rhs
-            if type(map.rhs) == "function" then
-                actual_rhs = function() return map.rhs(lhs) end
+            local actual_rhs = element.rhs
+            if type(element.rhs) == "function" then
+                actual_rhs = function() return element.rhs(lhs) end
             end
+            element.opts = element.opts or {}
             self:__check_key_confliction(name, lhs)
             self.submode_to_mappings[name][lhs] = {
                 rhs  = actual_rhs,
-                opts = map.opts
+                opts = element.opts
             }
         end
     end
