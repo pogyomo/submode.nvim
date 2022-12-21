@@ -159,14 +159,13 @@ function M:create(name, info, ...)
     end
 
     -- NOTE: To register leave key as a mapping of this submode,
-    --       I prevent key confliction (e.g. Register <ESC> as leave key when parent is insert mode)
+    --       I prevent key confliction.
+    --       e.g. Register <ESC> as leave key when parent is insert mode
     local listlized_leave = utils.listlize(info.leave or {})
-    for _, leave in ipairs(listlized_leave) do
-        self:register(name, {
-            lhs = leave,
-            rhs = function() self:leave() end
-        })
-    end
+    self:register(name, {
+        lhs = listlized_leave,
+        rhs = function() self:leave() end
+    })
 
     ---Register mappings.
     self:register(name, ...)
