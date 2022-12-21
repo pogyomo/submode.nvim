@@ -36,6 +36,10 @@ local mode  = require("submode.mode")
 ---@param map SubmodeMappingPre
 ---@return SubmodeMappings
 local function convert_map_pre_to_maps(map)
+    vim.validate{
+        map = { map, "table" }
+    }
+
     local ret = {}
     local listlized_lhs = utils.listlize(map.lhs)
     for _, lhs in ipairs(listlized_lhs) do
@@ -72,6 +76,10 @@ local M = {
 ---Initialize submode.nvim
 ---@param config? SubmodeSetupConfig
 function M:setup(config)
+    vim.validate{
+        config = { config, { "table", "nil" } }
+    }
+
     self.config = vim.tbl_extend("keep", config or {}, self.config)
     validate_config(self.config)
 
