@@ -16,20 +16,12 @@ function M.match(target, map, default)
     end
 end
 
----Take value-function paired map, then call a function
----associated to target. If not exist, call default.
----Unlike 'match', this doesn't return value.
+---Convert a value to list which maybe list.
 ---@generic T
----@param target T
----@param map table<T, function>
----@param default? function
-function M.switch(target, map, default)
-    local func = map[target]
-    if func ~= nil then
-        func()
-    elseif default ~= nil then
-        default()
-    end
+---@param target T | T[]
+---@return T[]
+function M.listlize(target)
+    return type(target) == "table" and target or { target }
 end
 
 return M

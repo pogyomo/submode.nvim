@@ -39,8 +39,8 @@ local default = {
 ---@return SubmodeMapping[]
 local function normalize_map_pre(map)
     local ret = {}
-    local tablized_lhs = type(map.lhs) == "table" and map.lhs or { map.lhs }
-    for _, lhs in ipairs(tablized_lhs --[=[@as string[]]=]) do
+    local listlized_lhs = utils.listlize(map.lhs)
+    for _, lhs in ipairs(listlized_lhs) do
         table.insert(ret, {
             lhs  = lhs,
             rhs  = map.rhs,
@@ -85,40 +85,25 @@ end
 function M:create(name, info, ...)
     vim.validate{
         name = { name, "string" },
-        info = { info, "table" },
+        info = { info, "table" }
     }
 
     self.submode_to_info[name] = info
 
-    utils.switch(type(info.enter), {
-        ["string"] = function()
-            vim.keymap.set(info.mode, info.enter, function() self:enter(name) end)
-        end,
-        ["table"] = function()
-            for _, enter in pairs(info.enter --[=[@as string[]]=]) do
-                vim.keymap.set(info.mode, enter, function() self:enter(name) end)
-            end
-        end
-    })
+    local listlized_enter = utils.listlize(info.enter or {})
+    for _, enter in ipairs(listlized_enter) do
+        vim.keymap.set(info.mode, enter, function() self:enter(name) end)
+    end
 
     -- NOTE: To register leave key as a mapping of this submode,
     --       I prevent key confliction (e.g. Register <ESC> as leave key when parent is insert mode)
-    utils.switch(type(info.leave), {
-        ["string"] = function()
-            self:register(name, {
-                lhs = info.leave --[[@as string]],
-                rhs = function() self:leave() end,
-            })
-        end,
-        ["table"] = function()
-            for _, leave in pairs(info.leave --[=[@as string[]]=]) do
-                self:register(name, {
-                    lhs = leave,
-                    rhs = function() self:leave() end,
-                })
-            end
-        end
-    })
+    local listlized_leave = utils.listlize(info.leave or {})
+    for _, leave in ipairs(listlized_leave) do
+        self:register(name, {
+            lhs = leave,
+            rhs = function() self:leave() end
+        })
+    end
 
     ---Register mappings.
     self:register(name, ...)
