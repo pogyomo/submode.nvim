@@ -15,7 +15,8 @@ local mode  = require("submode.mode")
 ---@field leave? string | string[]
 
 ---Combination of lhs and element.
----@alias SubmodeMappings table<string, SubmodeMappingElement>
+---@alias SubmodeMappingLhs string
+---@alias SubmodeMappings table<SubmodeMappingLhs, SubmodeMappingElement>
 
 ---Infomation of mapping except lhs.
 ---@class SubmodeMappingElement
@@ -70,7 +71,7 @@ local function validate_config(config)
     }
 end
 
----Default status of this plugin
+---Default state of this plugin
 ---@class Submode
 local default_state = {
     current_mode = "",

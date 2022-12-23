@@ -67,7 +67,9 @@ function M:is_parent_same(submode, name)
         end,
         ["t"] = self.is_terminal_mode,
         [""]  = function()
-            return self.is_normal_mode() or self.is_visual_mode() or self.is_o_pending_mode()
+            return self.is_normal_mode()
+                or self.is_visual_mode()
+                or self.is_o_pending_mode()
         end
     }, function()
         error(string.format("Parent of the submode %s is invalid: %s", name, parent))
