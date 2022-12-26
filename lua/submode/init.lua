@@ -29,11 +29,11 @@ local mode  = require("submode.mode")
 ---@field rhs string | fun(lha: string):string?
 ---@field opts? table
 
----@alias WhenMappingConflictType "error" | "keep" | "override"
+---@alias WhenMappingExistType "error" | "keep" | "override"
 ---@alias WhenSubmodeExistType    "error" | "keep" | "override"
 ---@class SubmodeSetupConfig
 ---@field leave_when_mode_changed boolean Leave from submode when parent mode is changed.
----@field when_mapping_conflict WhenMappingConflictType Behavior when mapping conflict.
+---@field when_mapping_exist WhenMappingExistType Behavior when mapping conflict.
 ---@field when_submode_exist WhenSubmodeExistType Behavior when submode exist.
 
 ---Convert SubmodeMappingPre to SubmodeMappings.
@@ -64,8 +64,8 @@ local function validate_config(config)
             config.leave_when_mode_changed,
             "boolean"
         },
-        when_mapping_conflict = {
-            config.when_mapping_conflict,
+        when_mapping_exist = {
+            config.when_mapping_exist,
             function(s)
                 return utils.is_one_of_them(s, {
                     "error", "keep", "override"
@@ -94,7 +94,7 @@ local default_state = {
     mapping_saver = saver:new(),
     config = {
         leave_when_mode_changed = false,
-        when_mapping_conflict = "error",
+        when_mapping_exist = "error",
         when_submode_exist = "error"
     }
 }
@@ -135,14 +135,14 @@ end
 ---@param lhs string Lhs of the mapping.
 ---@return boolean # True if mapping exist and when_mapping_exist isn't override.
 function M:__detect_mapping_confliction(name, lhs)
-    if self.config.when_mapping_conflict == "error" then
+    if self.config.when_mapping_exist == "error" then
         if not self.submode_to_mappings[name][lhs] then
             return false
         end
         local err_msg = "Mapping confliction detected in %s: %s is already defined."
         error(err_msg:format(name, lhs))
         return true
-    elseif self.config.when_mapping_conflict == "keep" then
+    elseif self.config.when_mapping_exist == "keep" then
         return self.submode_to_mappings[name][lhs] ~= nil
     else
         return false
@@ -157,7 +157,7 @@ function M:setup(config)
     }
 
     -- NOTE: I initialize internal state because if the settings of this plugin
-    --       is reloaded (i.e. PackerCompile) and when_mapping_conflict is error,
+    --       is reloaded (i.e. PackerCompile) and when_mapping_exist is error,
     --       error occure. This happen because create or register called although
     --       its settings is already exist. So this prevent the error.
     self:__initialize_state()
