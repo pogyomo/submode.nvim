@@ -119,6 +119,11 @@ setup({submode} [, {config}])                                *submode.setup()*
                   already exist. Accept following strings.
                       - "error": Throw error. This is default.
                       - "override": Override old mapping.
+                  - when_submode_conflict (string): Behavior when submode
+                  already exist. Accept following strings.
+                      - "error": Throw error. This is default.
+                      - "keep": Keep current submode.
+                      - "override": Override old submode.
 
     Return: ~
         nil

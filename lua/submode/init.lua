@@ -32,6 +32,7 @@ local mode  = require("submode.mode")
 ---@class SubmodeSetupConfig
 ---@field leave_when_mode_changed boolean Leave from submode when parent mode is changed.
 ---@field when_mapping_conflict "error" | "override" Behavior when mapping conflict.
+---@field when_submode_exist "error" | "keep" | "override" Behavior when submode exist.
 
 ---Convert SubmodeMappingPre to SubmodeMappings.
 ---This doesn't affect to map.rhs and map.opts.
@@ -64,9 +65,20 @@ local function validate_config(config)
         when_mapping_conflict = {
             config.when_mapping_conflict,
             function(s)
-                return s == "error" or s == "override"
+                return utils.is_one_of_them(s, {
+                    "error", "override"
+                })
             end,
             "error or override"
+        },
+        when_submode_exist = {
+            config.when_submode_exist,
+            function(s)
+                return utils.is_one_of_them(s, {
+                    "error", "keep", "override"
+                })
+            end,
+            "error, keep or override"
         }
     }
 end
@@ -80,7 +92,8 @@ local default_state = {
     mapping_saver = saver:new(),
     config = {
         leave_when_mode_changed = false,
-        when_mapping_conflict = "error"
+        when_mapping_conflict = "error",
+        when_submode_exist = "error"
     }
 }
 
@@ -95,6 +108,23 @@ function M:__initialize_state()
         --       I wan't to use default_state as constant table, but this may change
         --       its contents. So, I prevent this problem by using deepcopy.
         self[key] = vim.deepcopy(state)
+    end
+end
+
+---Detect submode confliction.
+---@param name string Name of submode.
+---@return boolean # True if submode exist and when_submode_exist isn't override.
+function M:__detect_submode_confliction(name)
+    if self.config.when_submode_exist == "error" then
+        if self.submode_to_info[name] then
+            error(("Submode %s already exist."):format(name))
+            return true
+        end
+        return false
+    elseif self.config.when_submode_exist == "keep" then
+        return self.submode_to_info[name] ~= nil
+    else
+        return false
     end
 end
 
@@ -124,6 +154,7 @@ function M:setup(config)
     --       its settings is already exist. So this prevent the error.
     self:__initialize_state()
 
+    -- Initialize config with given config.
     self.config = vim.tbl_extend("keep", config or {}, self.config)
     validate_config(self.config)
 
@@ -152,7 +183,12 @@ function M:create(name, info, ...)
         info = { info, "table" }
     }
 
+    if self:__detect_submode_confliction(name) then
+        return
+    end
+
     self.submode_to_info[name] = info
+    self.submode_to_mappings[name] = {}
 
     local listlized_enter = utils.listlize(info.enter or {})
     for _, enter in ipairs(listlized_enter) do
