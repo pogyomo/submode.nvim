@@ -11,6 +11,7 @@ local mode  = require("submode.mode")
 
 ---@class SubmodeInfo
 ---@field mode string
+---@field show_mode? boolean
 ---@field enter? string | string[]
 ---@field leave? string | string[]
 ---@field enter_cb? function
@@ -203,14 +204,21 @@ function M:create(name, info, ...)
         return
     end
 
+    info = vim.tbl_extend("keep", info, {
+        show_mode = true,
+        enter = {},
+        leave = {},
+        enter_cb = function() end,
+        leave_cb = function() end
+    })
     self.submode_to_info[name] = info
     self.submode_to_mappings[name] = {}
 
-    local listlized_enter = utils.listlize(info.enter or {})
+    local listlized_enter = utils.listlize(info.enter)
     for _, enter in ipairs(listlized_enter) do
         vim.keymap.set(info.mode, enter, function()
             self:enter(name, {
-                callback = info.enter_cb or function() end
+                callback = info.enter_cb
             })
         end)
     end
@@ -218,12 +226,12 @@ function M:create(name, info, ...)
     -- NOTE: To register leave key as a mapping of this submode,
     --       I prevent key confliction.
     --       e.g. Register <ESC> as leave key when parent is insert mode
-    local listlized_leave = utils.listlize(info.leave or {})
+    local listlized_leave = utils.listlize(info.leave)
     self:register(name, {
         lhs = listlized_leave,
         rhs = function()
             self:leave{
-                callback = info.leave_cb or function() end
+                callback = info.leave_cb
             }
         end
     })
@@ -272,8 +280,10 @@ function M:mode()
         return nil
     end
 
-    local parent_is_same = mode:is_parent_same(self, self.current_mode)
-    if parent_is_same then
+    local curr = self.current_mode
+    local info = self.submode_to_info[curr]
+    local parent_is_same = mode:is_parent_same(self, curr)
+    if parent_is_same and info.show_mode then
         return self.current_mode
     else
         return nil
