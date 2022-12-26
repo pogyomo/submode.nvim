@@ -30,7 +30,7 @@ local mode  = require("submode.mode")
 ---@field opts? table
 
 ---@alias WhenMappingExistType "error" | "keep" | "override"
----@alias WhenSubmodeExistType    "error" | "keep" | "override"
+---@alias WhenSubmodeExistType "error" | "keep" | "override"
 ---@class SubmodeSetupConfig
 ---@field leave_when_mode_changed boolean Leave from submode when parent mode is changed.
 ---@field when_mapping_exist WhenMappingExistType Behavior when mapping conflict.
