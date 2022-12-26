@@ -13,6 +13,8 @@ local mode  = require("submode.mode")
 ---@field mode string
 ---@field enter? string | string[]
 ---@field leave? string | string[]
+---@field enter_cb? function
+---@field leave_cb? function
 
 ---Combination of lhs and element.
 ---@alias SubmodeMappingLhs string
@@ -35,6 +37,12 @@ local mode  = require("submode.mode")
 ---@field leave_when_mode_changed boolean Leave from submode when parent mode is changed.
 ---@field when_mapping_exist WhenMappingExistType Behavior when mapping conflict.
 ---@field when_submode_exist WhenSubmodeExistType Behavior when submode exist.
+
+---@class SubmodeEnterOptions
+---@field callback? function Callback which will be called when enter the submode.
+
+---@class SubmodeLeaveOptions
+---@field callback? function Callback which will be called when leave from submode.
 
 ---Convert SubmodeMappingPre to SubmodeMappings.
 ---This doesn't affect to map.rhs and map.opts.
@@ -200,7 +208,11 @@ function M:create(name, info, ...)
 
     local listlized_enter = utils.listlize(info.enter or {})
     for _, enter in ipairs(listlized_enter) do
-        vim.keymap.set(info.mode, enter, function() self:enter(name) end)
+        vim.keymap.set(info.mode, enter, function()
+            self:enter(name, {
+                callback = info.enter_cb or function() end
+            })
+        end)
     end
 
     -- NOTE: To register leave key as a mapping of this submode,
@@ -209,7 +221,11 @@ function M:create(name, info, ...)
     local listlized_leave = utils.listlize(info.leave or {})
     self:register(name, {
         lhs = listlized_leave,
-        rhs = function() self:leave() end
+        rhs = function()
+            self:leave{
+                callback = info.leave_cb or function() end
+            }
+        end
     })
 
     ---Register mappings.
@@ -266,10 +282,13 @@ end
 
 ---Enter the submode.
 ---@param name string Name of submode to enter.
-function M:enter(name)
+---@param opts? SubmodeEnterOptions Options for this method.
+function M:enter(name, opts)
     vim.validate{
         name = { name, "string" },
+        opts = { opts, { "table", "nil" } }
     }
+    opts = opts or {}
 
     -- Validate that current mode and submode's parent mode is same
     local parent_is_same = mode:is_parent_same(self, name)
@@ -290,10 +309,20 @@ function M:enter(name)
     end
 
     self.current_mode = name
+
+    if opts.callback then
+        opts.callback()
+    end
 end
 
 ---Leave from current submode.
-function M:leave()
+---@param opts? SubmodeLeaveOptions
+function M:leave(opts)
+    vim.validate{
+        opts = { opts, { "table", "nil" } }
+    }
+    opts = opts or {}
+
     if self.current_mode == "" then
         return
     end
@@ -307,6 +336,10 @@ function M:leave()
     self.mapping_saver:restore()
 
     self.current_mode = ""
+
+    if opts.callback then
+        opts.callback()
+    end
 end
 
 return M
