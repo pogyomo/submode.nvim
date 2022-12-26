@@ -118,6 +118,7 @@ setup({submode} [, {config}])                                *submode.setup()*
                   - when_mapping_conflict (string): Behavior when mapping
                   already exist. Accept following strings.
                       - "error": Throw error. This is default.
+                      - "keep": Keep current mapping.
                       - "override": Override old mapping.
                   - when_submode_conflict (string): Behavior when submode
                   already exist. Accept following strings.

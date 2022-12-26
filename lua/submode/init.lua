@@ -29,10 +29,12 @@ local mode  = require("submode.mode")
 ---@field rhs string | fun(lha: string):string?
 ---@field opts? table
 
+---@alias WhenMappingConflictType "error" | "keep" | "override"
+---@alias WhenSubmodeExistType    "error" | "keep" | "override"
 ---@class SubmodeSetupConfig
 ---@field leave_when_mode_changed boolean Leave from submode when parent mode is changed.
----@field when_mapping_conflict "error" | "override" Behavior when mapping conflict.
----@field when_submode_exist "error" | "keep" | "override" Behavior when submode exist.
+---@field when_mapping_conflict WhenMappingConflictType Behavior when mapping conflict.
+---@field when_submode_exist WhenSubmodeExistType Behavior when submode exist.
 
 ---Convert SubmodeMappingPre to SubmodeMappings.
 ---This doesn't affect to map.rhs and map.opts.
@@ -66,10 +68,10 @@ local function validate_config(config)
             config.when_mapping_conflict,
             function(s)
                 return utils.is_one_of_them(s, {
-                    "error", "override"
+                    "error", "keep", "override"
                 })
             end,
-            "error or override"
+            "error, keep or override"
         },
         when_submode_exist = {
             config.when_submode_exist,
@@ -131,13 +133,19 @@ end
 ---Detect mapping confliction.
 ---@param name string Name of submode to check.
 ---@param lhs string Lhs of the mapping.
+---@return boolean # True if mapping exist and when_mapping_exist isn't override.
 function M:__detect_mapping_confliction(name, lhs)
-    if not self.submode_to_mappings[name][lhs] then
-        return
-    end
     if self.config.when_mapping_conflict == "error" then
+        if not self.submode_to_mappings[name][lhs] then
+            return false
+        end
         local err_msg = "Mapping confliction detected in %s: %s is already defined."
         error(err_msg:format(name, lhs))
+        return true
+    elseif self.config.when_mapping_conflict == "keep" then
+        return self.submode_to_mappings[name][lhs] ~= nil
+    else
+        return false
     end
 end
 
@@ -229,7 +237,9 @@ function M:register(name, ...)
             end
             element.opts = element.opts or {}
 
-            self:__detect_mapping_confliction(name, lhs)
+            if self:__detect_mapping_confliction(name, lhs) then
+                return
+            end
             self.submode_to_mappings[name][lhs] = {
                 rhs  = actual_rhs,
                 opts = element.opts
