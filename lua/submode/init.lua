@@ -300,6 +300,12 @@ function M:enter(name, opts)
     }
     opts = opts or {}
 
+    -- Validate given submode's name.
+    assert(
+        self.submode_to_info[name] ~= nil,
+        ("No such submode exist: %s"):format(name)
+    )
+
     -- Validate that current mode and submode's parent mode is same
     local parent_is_same = mode:is_parent_same(self, name)
     if not parent_is_same then
