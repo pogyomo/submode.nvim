@@ -217,9 +217,7 @@ function M:create(name, info, ...)
     local listlized_enter = utils.listlize(info.enter)
     for _, enter in ipairs(listlized_enter) do
         vim.keymap.set(info.mode, enter, function()
-            self:enter(name, {
-                callback = info.enter_cb
-            })
+            self:enter(name)
         end)
     end
 
@@ -230,9 +228,7 @@ function M:create(name, info, ...)
     self:register(name, {
         lhs = listlized_leave,
         rhs = function()
-            self:leave{
-                callback = info.leave_cb
-            }
+            self:leave()
         end
     })
 
@@ -292,13 +288,10 @@ end
 
 ---Enter the submode.
 ---@param name string Name of submode to enter.
----@param opts? SubmodeEnterOptions Options for this method.
-function M:enter(name, opts)
+function M:enter(name)
     vim.validate{
-        name = { name, "string" },
-        opts = { opts, { "table", "nil" } }
+        name = { name, "string" }
     }
-    opts = opts or {}
 
     -- Validate given submode's name.
     assert(
@@ -326,22 +319,18 @@ function M:enter(name, opts)
 
     self.current_mode = name
 
-    if opts.callback then
-        opts.callback()
+    if self.submode_to_info[name].enter_cb then
+        self.submode_to_info[name].enter_cb()
     end
 end
 
 ---Leave from current submode.
----@param opts? SubmodeLeaveOptions
-function M:leave(opts)
-    vim.validate{
-        opts = { opts, { "table", "nil" } }
-    }
-    opts = opts or {}
-
+function M:leave()
     if self.current_mode == "" then
         return
     end
+
+    local name = self.current_mode
 
     -- Delete mappings
     local parent = self.submode_to_info[self.current_mode].mode
@@ -353,8 +342,8 @@ function M:leave(opts)
 
     self.current_mode = ""
 
-    if opts.callback then
-        opts.callback()
+    if self.submode_to_info[name].leave_cb then
+        self.submode_to_info[name].leave_cb()
     end
 end
 

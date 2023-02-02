@@ -169,28 +169,22 @@ register({submode}, {name}, {map} ...)                    *submode.register()*
     Return: ~
         nil
 
-enter({submode}, {name}, {opts})                             *submode.enter()*
+enter({submode}, {name})                                     *submode.enter()*
     Enter the submode. This function only success if parent mode of the
     submode is same as current mode.
 
     Parameters: ~
         {submode} Submode instance that require("submode") returns.
         {name}    (string) Name of submode.
-        {opts}    Options with following keys. This is optional.
-                  - callback (function) optional: Callback which will be
-                  called when enter submode.
 
     Return: ~
         nil
 
-leave({submode}, {opts})                                     *submode.leave()*
+leave({submode})                                             *submode.leave()*
     Leave from current submode.
 
     Parameters: ~
         {submode} Submode instance that require("submode") returns.
-        {opts}    Options with following keys. This is optional.
-                  - callback (function) optional: Callback which will be
-                  called when leave from submode.
 
     Return: ~
         nil
