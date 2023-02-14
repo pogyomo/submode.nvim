@@ -18,8 +18,8 @@ local mode  = require("submode.mode")
 ---@field leave_cb? function
 
 ---Combination of lhs and element.
----@alias SubmodeMappingLhs string
 ---@alias SubmodeMappings table<SubmodeMappingLhs, SubmodeMappingElement>
+---@alias SubmodeMappingLhs string
 
 ---Infomation of mapping except lhs.
 ---@class SubmodeMappingElement
@@ -32,12 +32,13 @@ local mode  = require("submode.mode")
 ---@field rhs string | fun(lha: string):string?
 ---@field opts? table
 
----@alias WhenMappingExistType "error" | "keep" | "override"
----@alias WhenSubmodeExistType "error" | "keep" | "override"
 ---@class SubmodeSetupConfig
 ---@field leave_when_mode_changed boolean Leave from submode when parent mode is changed.
 ---@field when_mapping_exist WhenMappingExistType Behavior when mapping conflict.
 ---@field when_submode_exist WhenSubmodeExistType Behavior when submode exist.
+
+---@alias WhenMappingExistType "error" | "keep" | "override"
+---@alias WhenSubmodeExistType "error" | "keep" | "override"
 
 ---@class SubmodeEnterOptions
 ---@field callback? function Callback which will be called when enter the submode.
@@ -204,6 +205,7 @@ function M:create(name, info, ...)
         return
     end
 
+    ---@type SubmodeInfo
     info = vim.tbl_extend("keep", info, {
         show_mode = true,
         enter = {},
