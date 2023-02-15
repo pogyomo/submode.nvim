@@ -42,6 +42,7 @@ function M:create(mode)
     end
     bufs = remove_duplication(bufs)
 
+    self.mode_to_snapshot[mode] = {}
     local snapshot = self.mode_to_snapshot[mode]
     snapshot.global = keymap.get_global_keymap(mode)
     snapshot.buffer = {}

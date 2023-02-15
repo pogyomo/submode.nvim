@@ -1,12 +1,12 @@
 local utils = require("submode.utils")
-local saver = require("submode.saver")
 local mode  = require("submode.mode")
+local snapshot = require("submode.snapshot")
 
 ---@class Submode
 ---@field current_mode string Represent current mode, or empty string if not in submode.
 ---@field submode_to_info table<string, SubmodeInfo> Infomation of the submode.
 ---@field submode_to_mappings table<string, SubmodeMappings> Mappings of the submode.
----@field mapping_saver MappingSaver Mapping saver.
+---@field snapshot SnapshotManager
 ---@field config SubmodeSetupConfig Config of this plugin.
 
 ---@class SubmodeInfo
@@ -100,7 +100,7 @@ local default_state = {
     current_mode = "",
     submode_to_info = {},
     submode_to_mappings = {},
-    mapping_saver = saver:new(),
+    snapshot = snapshot:new(),
     config = {
         leave_when_mode_changed = false,
         when_mapping_exist = "error",
@@ -312,8 +312,8 @@ function M:enter(name)
 
     -- Register mappings
     local parent = self.submode_to_info[name].mode
+    self.snapshot:create(parent)
     for lhs, map in pairs(self.submode_to_mappings[name] or {}) do
-        self.mapping_saver:save(parent, lhs)
         vim.keymap.set(parent, lhs, map.rhs, map.opts)
     end
 
@@ -337,8 +337,7 @@ function M:leave()
     for lhs, _ in pairs(self.submode_to_mappings[self.current_mode] or {}) do
         vim.keymap.del(parent, lhs)
     end
-
-    self.mapping_saver:restore()
+    self.snapshot:restore(parent)
 
     self.current_mode = ""
 

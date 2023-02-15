@@ -27,11 +27,11 @@ local function get_keymap(mode, buf)
         mode = {
             mode,
             function(s)
-                utils.is_one_of_them(s, {
+                return utils.is_one_of_them(s, {
                     "n", "v", "x", "s", "o", "i", "c", "t", "!", ""
                 })
             end,
-            "one of n, v, x, s, o, i, c, t, ! or ''"
+            "n, v, x, s, o, i, c, t, ! or ''"
         },
         buf = { buf, { "number", "nil" } }
     }
