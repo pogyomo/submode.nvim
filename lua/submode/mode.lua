@@ -66,6 +66,9 @@ function M:is_parent_same(submode, name)
             error("Currently submode.nvim dosen't accept 'l' as parent mode")
         end,
         ["t"] = self.is_terminal_mode,
+        ["!"] = function()
+            return self.is_insert_mode() or self.is_cmdline_mode()
+        end,
         [""]  = function()
             return self.is_normal_mode()
                 or self.is_visual_mode()
