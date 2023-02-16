@@ -20,9 +20,8 @@ recommend you to check commit message.
 ==============================================================================
 Requirement                                              *submode-requirement*
 
-This plugin requires neovim >= 0.8 if you want to use lua function at {rhs} of
-register. Because this plugin using mapset/maparg internally and it dosen't
-support key mappings which rhs is lua function if neovim < 0.8.
+This is dependency-free plugin, but I recommend you to use nightly neovim
+because this plugin will use nightly-only feature.
 
 ==============================================================================
 Introduction                                            *submode-introduction*
@@ -78,21 +77,11 @@ Finally, register mappings to submode
                    -- This is optional
     })
 <
-If you want, you can register leave key instead add key to {leave} of create.
->lua
-    submode:register("name-of-submode", {
-        lhs = "keys-to-leave-from-this-submode",
-        rhs = function()
-            -- processes to do before exit this submode
-            submode:leave()
-        end
-    })
-<
 You can exit from submode by pressing registered leave key, or simply change
 parent mode (if leave_when_mode_changed is true).
 
-Also, you can enter submode by calling |enter()| method with the name of
-submode.
+Also, you can enter submode by calling |submode.enter()| method with the name
+of submode.
 
 If you want to show current submode to statusline, you can get current
 submode's name via mode method
@@ -136,7 +125,8 @@ create({submode}, {name}, {info}, {map} ...)                *submode.create()*
         {submode} Submode instance that require("submode") returns.
         {name}    (string) Name of submode.
         {info}    Infomation of this submode with following keys.
-                  - mode (string): Parent mode. See {mode} of |maparg()|
+                  - mode (string): Parent mode. See {mode} of
+                  |nvim_set_keymap()|
                   - show_mode (boolean) optional: If false, |submode.mode()|
                   always return nil if current submode is this. Default is
                   true.
