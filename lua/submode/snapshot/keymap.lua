@@ -58,20 +58,24 @@ local function get_keymap(mode, buf)
         maps = getter(mode)
     end
 
-    return {
-        lhs = maps.lhs,
-        rhs = maps.rhs or "",
-        opts = {
-            silent   = maps.silent == 1,
-            noremap  = maps.noremap == 1,
-            script   = maps.script == 1,
-            expr     = maps.expr == 1,
-            nowait   = maps.nowait == 1,
-            desc     = maps.desc,
-            callback = maps.callback,
-            replace_keycodes = maps.replace_keycodes and maps.replace_keycodes == 1
-        }
-    }
+    local ret = {}
+    for _, map in ipairs(maps) do
+        table.insert(ret, {
+            lhs = map.lhs,
+            rhs = map.rhs or "",
+            opts = {
+                silent   = map.silent == 1,
+                noremap  = map.noremap == 1,
+                script   = map.script == 1,
+                expr     = map.expr == 1,
+                nowait   = map.nowait == 1,
+                desc     = map.desc,
+                callback = map.callback,
+                replace_keycodes = map.replace_keycodes and map.replace_keycodes == 1
+            }
+        })
+    end
+    return ret
 end
 
 local M = {}

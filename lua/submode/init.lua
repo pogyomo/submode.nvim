@@ -8,6 +8,7 @@ local snapshot = require("submode.snapshot")
 ---@field submode_to_mappings table<string, SubmodeMappings> Mappings of the submode.
 ---@field snapshot SnapshotManager
 ---@field config SubmodeSetupConfig Config of this plugin.
+---@field leave_bufs integer[] Buffers where leave key registered.
 
 ---@class SubmodeInfo
 ---@field mode string
@@ -105,7 +106,8 @@ local default_state = {
         leave_when_mode_changed = false,
         when_mapping_exist = "error",
         when_submode_exist = "error"
-    }
+    },
+    leave_bufs = {}
 }
 
 ---@class Submode
@@ -221,17 +223,6 @@ function M:create(name, info, ...)
         end)
     end
 
-    -- NOTE: To register leave key as a mapping of this submode,
-    --       I prevent key confliction.
-    --       e.g. Register <ESC> as leave key when parent is insert mode
-    local listlized_leave = utils.listlize(info.leave)
-    self:register(name, {
-        lhs = listlized_leave,
-        rhs = function()
-            self:leave()
-        end
-    })
-
     ---Register mappings.
     self:register(name, ...)
 end
@@ -294,10 +285,8 @@ function M:enter(name)
     }
 
     -- Validate given submode's name.
-    assert(
-        self.submode_to_info[name] ~= nil,
-        ("No such submode exist: %s"):format(name)
-    )
+    local info = self.submode_to_info[name]
+    assert(info ~= nil, ("No such submode exist: %s"):format(name))
 
     -- Validate that current mode and submode's parent mode is same
     local parent_is_same = mode:is_parent_same(self, name)
@@ -310,11 +299,25 @@ function M:enter(name)
         self:leave()
     end
 
+    -- Create snapshot
+    self.snapshot:create(info.mode)
+
     -- Register mappings
-    local parent = self.submode_to_info[name].mode
-    self.snapshot:create(parent)
     for lhs, map in pairs(self.submode_to_mappings[name] or {}) do
-        vim.keymap.set(parent, lhs, map.rhs, map.opts)
+        vim.keymap.set(info.mode, lhs, map.rhs, map.opts)
+    end
+
+    -- Register leave keys to all buffers
+    local listlized_leave = utils.listlize(self.submode_to_info[name].leave)
+    for _, buf in ipairs(utils.get_list_bufs()) do
+        table.insert(self.leave_bufs, buf)
+        for _, leave in ipairs(listlized_leave) do
+            vim.api.nvim_buf_set_keymap(buf, info.mode, leave, "", {
+                callback = function()
+                    self:leave()
+                end
+            })
+        end
     end
 
     self.current_mode = name
@@ -331,13 +334,26 @@ function M:leave()
     end
 
     local name = self.current_mode
+    local info = self.submode_to_info[name]
+
+    -- Delete leave keys from all buffers
+    local listlized_leave = utils.listlize(info.leave)
+    for _, leave in ipairs(listlized_leave) do
+        for _, buf in ipairs(self.leave_bufs) do
+            if vim.api.nvim_buf_is_valid(buf) then
+                vim.api.nvim_buf_del_keymap(buf, info.mode, leave)
+            end
+        end
+    end
+    self.leave_bufs = {}
 
     -- Delete mappings
-    local parent = self.submode_to_info[self.current_mode].mode
     for lhs, _ in pairs(self.submode_to_mappings[self.current_mode] or {}) do
-        vim.keymap.del(parent, lhs)
+        vim.keymap.del(info.mode, lhs)
     end
-    self.snapshot:restore(parent)
+
+    -- Restore previous keymaps from created snapshot
+    self.snapshot:restore(info.mode)
 
     self.current_mode = ""
 
