@@ -264,11 +264,15 @@ function M:enter(name)
         vim.keymap.set(info.mode, lhs, map.rhs, map.opts)
     end
 
-    -- Register leave keys to all buffers
-    local listlized_leave = utils.listlize(self.submode_to_info[name].leave)
-    for _, buf in ipairs(utils.get_list_bufs()) do
-        table.insert(self.leave_bufs, buf)
-        for _, leave in ipairs(listlized_leave) do
+    -- Register leave keys to global and all buffers
+    self.leave_bufs = utils.get_list_bufs()
+    for _, leave in ipairs(utils.listlize(info.leave)) do
+        vim.api.nvim_set_keymap(info.mode, leave, "", {
+            callback = function()
+                self:leave()
+            end
+        })
+        for _, buf in ipairs(utils.get_list_bufs()) do
             vim.api.nvim_buf_set_keymap(buf, info.mode, leave, "", {
                 callback = function()
                     self:leave()
@@ -293,9 +297,9 @@ function M:leave()
     local name = self.current_mode
     local info = self.submode_to_info[name]
 
-    -- Delete leave keys from all buffers
-    local listlized_leave = utils.listlize(info.leave)
-    for _, leave in ipairs(listlized_leave) do
+    -- Delete leave keys from global and all buffers
+    for _, leave in ipairs(utils.listlize(info.leave)) do
+        vim.api.nvim_del_keymap(info.mode, leave)
         for _, buf in ipairs(self.leave_bufs) do
             if vim.api.nvim_buf_is_valid(buf) then
                 vim.api.nvim_buf_del_keymap(buf, info.mode, leave)
