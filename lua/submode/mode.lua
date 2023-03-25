@@ -75,7 +75,7 @@ function M:is_parent_same(submode, name)
                 or self.is_o_pending_mode()
         end
     }, function()
-        error(string.format("Parent of the submode %s is invalid: %s", name, parent))
+        error(("Parent of the submode %s is invalid: %s"):format(name, parent))
     end)
 end
 

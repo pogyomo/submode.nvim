@@ -104,7 +104,7 @@ function M:__detect_mapping_confliction(name, lhs)
         if not self.submode_to_mappings[name][lhs] then
             return false
         end
-        local err_msg = "Mapping confliction detected in %s: %s is already defined."
+        local err_msg = "Mapping confliction detected in %s: %s is already exist."
         error(err_msg:format(name, lhs))
         return true
     elseif self.config.when_mapping_exist == "keep" then
