@@ -73,9 +73,7 @@ local M = {}
 ---All mappings and config will be lost.
 function M:__initialize_state()
     for key, state in pairs(default_state) do
-        -- NOTE: If I don't use deepcopy, table is stored as reference.
-        --       I wan't to use default_state as constant table, but this may change
-        --       its contents. So, I prevent this problem by using deepcopy.
+        -- Use cloned default value to prevent that default value is changed.
         self[key] = vim.deepcopy(state)
     end
 end
@@ -123,10 +121,8 @@ function M:setup(config)
         config = { config, { "table", "nil" } }
     }
 
-    -- NOTE: I initialize internal state because if the settings of this plugin
-    --       is reloaded (i.e. PackerCompile) and when_mapping_exist is error,
-    --       error occure. This happen because create or register called although
-    --       its settings is already exist. So this prevent the error.
+    -- Initialize internal state to prevent error when setup is called
+    -- more than once.
     self:__initialize_state()
 
     -- Initialize config with given config.
