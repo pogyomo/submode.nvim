@@ -130,6 +130,8 @@ create({submode}, {name}, {info}, {map} ...)                *submode.create()*
                   - show_mode (boolean) optional: If false, |submode.mode()|
                   always return nil if current submode is this. Default is
                   true.
+                  - mode_name (string | fun():string) optional: If exist,
+                  |submode.mode()| return this content instead of its name.
                   - enter (string | string[]) optional: keymaps to enter this
                   submode.
                   - leave (string | string[]) optional: keymaps to leave from

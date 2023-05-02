@@ -9,6 +9,7 @@
 ---@class SubmodeInfo
 ---@field mode string
 ---@field show_mode? boolean
+---@field mode_name? string | fun():string
 ---@field enter? string | string[]
 ---@field leave? string | string[]
 ---@field enter_cb? function

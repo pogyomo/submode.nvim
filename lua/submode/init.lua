@@ -224,7 +224,13 @@ function M:mode()
     local info = self.submode_to_info[curr]
     local parent_is_same = mode:is_parent_same(self, curr)
     if parent_is_same and info.show_mode then
-        return self.current_mode
+        if type(info.mode_name) == "function" then
+            return info.mode_name()
+        elseif type(info.mode_name) == "string" then
+            return info.mode_name --[[@as string]]
+        else
+            return self.current_mode
+        end
     else
         return nil
     end
