@@ -24,20 +24,6 @@ function M.listlize(target)
     return type(target) == "table" and target or { target }
 end
 
----Whether the target is in lists.
----@generic T
----@param target T Target value.
----@param lists T[] List for check.
----@return boolean True if target is in lists.
-function M.is_one_of_them(target, lists)
-    for _, value in ipairs(lists) do
-        if target == value then
-            return true
-        end
-    end
-    return false
-end
-
 ---Get all buffers.
 ---@return integer[]
 function M.get_list_bufs()

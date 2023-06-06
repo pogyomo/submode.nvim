@@ -33,18 +33,18 @@ local function validate_config(config)
         when_mapping_exist = {
             config.when_mapping_exist,
             function(s)
-                return utils.is_one_of_them(s, {
+                return vim.list_contains({
                     "error", "keep", "override"
-                })
+                }, s)
             end,
             "error, keep or override"
         },
         when_submode_exist = {
             config.when_submode_exist,
             function(s)
-                return utils.is_one_of_them(s, {
+                return vim.list_contains({
                     "error", "keep", "override"
-                })
+                }, s)
             end,
             "error, keep or override"
         }
