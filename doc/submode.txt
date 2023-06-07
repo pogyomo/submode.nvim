@@ -43,6 +43,12 @@ packer.nvim ~
 >lua
     use("pogyomo/submode.nvim")
 <
+lazy.nvim ~
+>lua
+    require("lazy").setup{
+        { "pogyomo/submode.nvim", config = true }
+    }
+<
 ==============================================================================
 Usage                                                          *submode-usage*
 
@@ -88,6 +94,29 @@ submode's name via mode method
 >lua
     submode:mode() -- This will return current submode's name, or nil if not
                    -- in submode
+<
+You can customize the return value of |submode.mode()| by setting |mode_name|
+of |submode.create()|.
+>lua
+    local state = 0
+    submode:create("hoge", {
+        mode = "n",
+        enter = "]",
+        enter_cb = function() state = 0 end,
+        leave = "]",
+        mode_name = function()
+            if state == 0 then
+                return "initial state"
+            elseif state == 1 then
+                return "a is pressed"
+            elseif state == 2 then
+                return "b is pressed"
+            end
+        end
+    }, {
+        lhs = { "a", "b" },
+        rhs = function(lhs) state = lhs == "a" and 1 or 2 end
+    })
 <
 ==============================================================================
 Methods                                                      *submode-methods*
