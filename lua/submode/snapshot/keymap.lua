@@ -27,9 +27,9 @@ local function get_keymap(mode, buf)
         mode = {
             mode,
             function(s)
-                return utils.is_one_of_them(s, {
+                return vim.list_contains({
                     "n", "v", "x", "s", "o", "i", "c", "t", "!", ""
-                })
+                }, s)
             end,
             "n, v, x, s, o, i, c, t, ! or ''"
         },
