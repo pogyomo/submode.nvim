@@ -1,5 +1,3 @@
-local utils = require("submode.utils")
-
 ---Prefix of map command or "!" for :map!, or "" for :map.
 ---Same as the mode nvim[_buf]_set_keymap accept.
 ---@alias ShortenMode "n" | "v" | "x" | "s" | "o" | "i" | "l" | "c" | "t" | "!" | ""
