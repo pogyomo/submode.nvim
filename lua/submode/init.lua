@@ -169,7 +169,7 @@ function M:create(name, info, ...)
     self.submode_to_info[name] = info
     self.submode_to_mappings[name] = {}
 
-    local listlized_enter = utils.listlize(info.enter)
+    local listlized_enter = utils.listlize(info.enter) --[=[@as string[]]=]
     for _, enter in ipairs(listlized_enter) do
         vim.keymap.set(info.mode, enter, function()
             self:enter(name)
@@ -268,7 +268,7 @@ function M:enter(name)
 
     -- Register leave keys to global and all buffers
     self.leave_bufs = utils.get_list_bufs()
-    for _, leave in ipairs(utils.listlize(info.leave)) do
+    for _, leave in ipairs(utils.listlize(info.leave) --[=[@as string[]]=]) do
         vim.api.nvim_set_keymap(info.mode, leave, "", {
             callback = function()
                 self:leave()
@@ -300,7 +300,7 @@ function M:leave()
     local info = self.submode_to_info[name]
 
     -- Delete leave keys from global and all buffers
-    for _, leave in ipairs(utils.listlize(info.leave)) do
+    for _, leave in ipairs(utils.listlize(info.leave) --[=[@as string[]]=]) do
         vim.api.nvim_del_keymap(info.mode, leave)
         for _, buf in ipairs(self.leave_bufs) do
             if vim.api.nvim_buf_is_valid(buf) then
