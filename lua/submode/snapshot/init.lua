@@ -51,8 +51,10 @@ function M:restore(mode)
     -- Restore buffer-local keymaps.
     -- NOTE: I use pairs instead of ipairs because buffer handle is not continuous.
     for buf, maps in pairs(snapshot.buffer) do
-        for _, map in ipairs(maps) do
-            vim.api.nvim_buf_set_keymap(buf, mode, map.lhs, map.rhs, map.opts)
+        if vim.api.nvim_buf_is_valid(buf) then
+            for _, map in ipairs(maps) do
+                vim.api.nvim_buf_set_keymap(buf, mode, map.lhs, map.rhs, map.opts)
+            end
         end
     end
 end
