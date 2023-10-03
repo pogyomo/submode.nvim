@@ -1,49 +1,56 @@
 local utils = require("submode.utils")
 
+---@return string
+local function mode()
+    -- TODO: Replace vim.fn.mode with vim.api.nvim_get_mode
+    --       if the replacement doesn't change old behavior
+    return vim.fn.mode(1) --[[@as string]]
+end
+
 local M = {}
 
 ---@return boolean # True, or false if not in normal mode.
 function M.is_normal_mode()
-    local pat1 = string.find(vim.fn.mode(1), "^n") ~= nil
-    local pat2 = string.find(vim.fn.mode(1), "^ni.*") ~= nil
-    local pat3 = string.find(vim.fn.mode(1), "^nt.*") ~= nil
+    local pat1 = string.find(mode(), "^n") ~= nil
+    local pat2 = string.find(mode(), "^ni.*") ~= nil
+    local pat3 = string.find(mode(), "^nt.*") ~= nil
     return pat1 or pat2 or pat3
 end
 
 ---@return boolean # True, or false if not in visual mode.
 function M.is_visual_mode()
-    local pat1 = string.find(vim.fn.mode(1), "^v.*") ~= nil
-    local pat2 = string.find(vim.fn.mode(1), "^V.*") ~= nil
-    local pat3 = string.find(vim.fn.mode(1), "^\x16.*") ~= nil
+    local pat1 = string.find(mode(), "^v.*") ~= nil
+    local pat2 = string.find(mode(), "^V.*") ~= nil
+    local pat3 = string.find(mode(), "^\x16.*") ~= nil
     return pat1 or pat2 or pat3
 end
 
 ---@return boolean # True, or false if not in operator-pending mode.
 function M.is_o_pending_mode()
-    return string.find(vim.fn.mode(1), "^no.*") ~= nil
+    return string.find(mode(), "^no.*") ~= nil
 end
 
 ---@return boolean # True, or false if not in insert mode.
 function M.is_insert_mode()
-    return string.find(vim.fn.mode(1), "^i.*") ~= nil
+    return string.find(mode(), "^i.*") ~= nil
 end
 
 ---@return boolean # True, or false if not in cmdline mode.
 function M.is_cmdline_mode()
-    return string.find(vim.fn.mode(1), "^c.*") ~= nil
+    return string.find(mode(), "^c.*") ~= nil
 end
 
 ---@return boolean # True, or false if not in select mode.
 function M.is_select_mode()
-    local pat1 = string.find(vim.fn.mode(1), "^s") ~= nil
-    local pat2 = string.find(vim.fn.mode(1), "^S") ~= nil
-    local pat3 = string.find(vim.fn.mode(1), "^\x13") ~= nil
+    local pat1 = string.find(mode(), "^s") ~= nil
+    local pat2 = string.find(mode(), "^S") ~= nil
+    local pat3 = string.find(mode(), "^\x13") ~= nil
     return pat1 or pat2 or pat3
 end
 
 ---@return boolean # True, or false if not in select mode.
 function M.is_terminal_mode()
-    return string.find(vim.fn.mode(1), "^t") ~= nil
+    return string.find(mode(), "^t") ~= nil
 end
 
 ---Whether current mode and given submode's parent is same or not.
