@@ -7,7 +7,7 @@
 ---@field leave_bufs integer[] Buffers where leave key registered.
 
 ---@class SubmodeInfo
----@field mode string
+---@field mode ShortenMode
 ---@field show_mode? boolean
 ---@field mode_name? string | fun():string
 ---@field enter? string | string[]
