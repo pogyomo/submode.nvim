@@ -25,13 +25,15 @@ end
 function M:create(mode)
     local bufs = utils.get_list_bufs()
 
-    self.mode_to_snapshot[mode] = {}
-    local snapshot = self.mode_to_snapshot[mode]
-    snapshot.global = keymap.get_global_keymap(mode)
-    snapshot.buffer = {}
+    local global = keymap.get_global_keymap(mode)
+    local buffer = {}
     for _, buf in ipairs(bufs) do
-        snapshot.buffer[buf] = keymap.get_buffer_keymap(buf, mode)
+        buffer[buf] = keymap.get_buffer_keymap(buf, mode)
     end
+    self.mode_to_snapshot[mode] = {
+        global = global,
+        buffer = buffer
+    }
 end
 
 ---Restore mappings from previously created snapshot of given mode.
