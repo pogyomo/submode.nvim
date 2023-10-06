@@ -26,10 +26,10 @@ local function get_keymap(mode, buf)
             mode,
             function(s)
                 return vim.list_contains({
-                    "n", "v", "x", "s", "o", "i", "c", "t", "!", ""
+                    "n", "v", "x", "s", "o", "i", "l", "c", "t", "!", ""
                 }, s)
             end,
-            "n, v, x, s, o, i, c, t, ! or ''"
+            "n, v, x, s, o, i, l, c, t, ! or ''"
         },
         buf = { buf, { "number", "nil" } }
     }
