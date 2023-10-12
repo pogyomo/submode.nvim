@@ -2,6 +2,17 @@ local utils = require("submode.utils")
 local mode  = require("submode.mode")
 local snapshot = require("submode.snapshot")
 
+if vim.fn.has("nvim-0.10.0") == 0 then
+    vim.list_contains = function(list, value)
+        for _, v in ipairs(list) do
+            if v == value then
+                return true
+            end
+        end
+        return false
+    end
+end
+
 ---Convert SubmodeMappingPre to SubmodeMappings.
 ---This doesn't affect to map.rhs and map.opts.
 ---@param map SubmodeMappingPre
