@@ -37,9 +37,3 @@
 
 ---@alias WhenMappingExistType "error" | "keep" | "override"
 ---@alias WhenSubmodeExistType "error" | "keep" | "override"
-
----@class SubmodeEnterOptions
----@field callback? function Callback which will be called when enter the submode.
-
----@class SubmodeLeaveOptions
----@field callback? function Callback which will be called when leave from submode.
