@@ -1,9 +1,12 @@
 ---@class Submode
+---@field state SubmodeState Internal state of submode
+---@field config SubmodeSetupConfig Config of this plugin.
+
+---@class SubmodeState
 ---@field current_mode string Represent current mode, or empty string if not in submode.
 ---@field submode_to_info table<string, SubmodeInfo> Infomation of the submode.
 ---@field submode_to_mappings table<string, SubmodeMappings> Mappings of the submode.
 ---@field snapshot SnapshotManager
----@field config SubmodeSetupConfig Config of this plugin.
 ---@field leave_bufs integer[] Buffers where leave key registered.
 
 ---@class SubmodeInfo

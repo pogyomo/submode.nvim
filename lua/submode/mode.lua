@@ -56,30 +56,30 @@ end
 ---Whether current mode and given submode's parent is same or not.
 ---@param submode Submode
 ---@param name string Name of submode.
-function M:is_parent_same(submode, name)
-    local parent = submode.submode_to_info[name].mode
+function M.is_parent_same(submode, name)
+    local parent = submode.state.submode_to_info[name].mode
     return utils.match(parent, {
-        ["n"] = self.is_normal_mode,
+        ["n"] = M.is_normal_mode,
         ["v"] = function()
-            return self.is_visual_mode() or self.is_select_mode()
+            return M.is_visual_mode() or M.is_select_mode()
         end,
-        ["o"] = self.is_o_pending_mode,
-        ["i"] = self.is_insert_mode,
-        ["c"] = self.is_cmdline_mode,
-        ["s"] = self.is_select_mode,
-        ["x"] = self.is_visual_mode,
+        ["o"] = M.is_o_pending_mode,
+        ["i"] = M.is_insert_mode,
+        ["c"] = M.is_cmdline_mode,
+        ["s"] = M.is_select_mode,
+        ["x"] = M.is_visual_mode,
         -- TODO: Support 'l' as parent mode
         ["l"] = function()
             error("Currently submode.nvim dosen't accept 'l' as parent mode")
         end,
-        ["t"] = self.is_terminal_mode,
+        ["t"] = M.is_terminal_mode,
         ["!"] = function()
-            return self.is_insert_mode() or self.is_cmdline_mode()
+            return M.is_insert_mode() or M.is_cmdline_mode()
         end,
         [""]  = function()
-            return self.is_normal_mode()
-                or self.is_visual_mode()
-                or self.is_o_pending_mode()
+            return M.is_normal_mode()
+                or M.is_visual_mode()
+                or M.is_o_pending_mode()
         end
     }, function()
         error(("Parent of the submode %s is invalid: %s"):format(name, parent))

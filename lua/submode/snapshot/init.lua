@@ -11,6 +11,7 @@ local utils  = require("submode.utils")
 ---@class SnapshotManager
 local M = {}
 
+---Create a new `SpanshotManager` instance.
 ---@return SnapshotManager
 function M:new()
     return setmetatable({
