@@ -76,11 +76,9 @@ function M.is_parent_same(submode, name)
         ["!"] = function()
             return M.is_insert_mode() or M.is_cmdline_mode()
         end,
-        [""]  = function()
-            return M.is_normal_mode()
-                or M.is_visual_mode()
-                or M.is_o_pending_mode()
-        end
+        [""] = function()
+            return M.is_normal_mode() or M.is_visual_mode() or M.is_o_pending_mode()
+        end,
     }, function()
         error(("Parent of the submode %s is invalid: %s"):format(name, parent))
     end)

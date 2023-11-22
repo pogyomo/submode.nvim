@@ -1,5 +1,5 @@
 local utils = require("submode.utils")
-local mode  = require("submode.mode")
+local mode = require("submode.mode")
 local snapshot = require("submode.snapshot")
 
 if vim.fn.has("nvim-0.10.0") == 0 then
@@ -18,16 +18,16 @@ end
 ---@param map SubmodeMappingPre
 ---@return SubmodeMappings
 local function convert_map_pre_to_maps(map)
-    vim.validate{
-        map = { map, "table" }
+    vim.validate {
+        map = { map, "table" },
     }
 
     local ret = {}
     local listlized_lhs = utils.listlize(map.lhs)
     for _, lhs in ipairs(listlized_lhs) do
         ret[lhs] = {
-            rhs  = map.rhs,
-            opts = map.opts
+            rhs = map.rhs,
+            opts = map.opts,
         }
     end
     return ret
@@ -36,29 +36,33 @@ end
 ---Validate config.
 ---@param config SubmodeSetupConfig Config to validate.
 local function validate_config(config)
-    vim.validate{
+    vim.validate {
         leave_when_mode_changed = {
             config.leave_when_mode_changed,
-            "boolean"
+            "boolean",
         },
         when_mapping_exist = {
             config.when_mapping_exist,
             function(s)
                 return vim.list_contains({
-                    "error", "keep", "override"
+                    "error",
+                    "keep",
+                    "override",
                 }, s)
             end,
-            "error, keep or override"
+            "error, keep or override",
         },
         when_submode_exist = {
             config.when_submode_exist,
             function(s)
                 return vim.list_contains({
-                    "error", "keep", "override"
+                    "error",
+                    "keep",
+                    "override",
                 }, s)
             end,
-            "error, keep or override"
-        }
+            "error, keep or override",
+        },
     }
 end
 
@@ -69,7 +73,7 @@ local default_state = {
     submode_to_info = {},
     submode_to_mappings = {},
     snapshot = snapshot:new(),
-    leave_bufs = {}
+    leave_bufs = {},
 }
 
 ---Default config of this plugin
@@ -77,7 +81,7 @@ local default_state = {
 local default_config = {
     leave_when_mode_changed = false,
     when_mapping_exist = "error",
-    when_submode_exist = "error"
+    when_submode_exist = "error",
 }
 
 ---@class Submode
@@ -129,7 +133,9 @@ end
 ---Initialize submode.nvim
 ---@param config? SubmodeSetupConfig
 function M.setup(config)
-    if config and config.setup --[[@as Submode]] then
+    if
+        config and config.setup --[[@as Submode]]
+    then
         vim.notify(
             "You are trying to call methods using `:`, which is the old way. Instead, use `.` instead.",
             vim.log.levels.ERROR,
@@ -138,8 +144,8 @@ function M.setup(config)
         return
     end
 
-    vim.validate{
-        config = { config, { "table", "nil" } }
+    vim.validate {
+        config = { config, { "table", "nil" } },
     }
 
     -- Initialize internal state and config to prevent error when setup is called
@@ -160,7 +166,7 @@ function M.setup(config)
             pattern = "*",
             callback = function()
                 M.leave()
-            end
+            end,
         })
     end
 end
@@ -172,9 +178,9 @@ end
 function M.create(name, info, ...)
     local state = M.state
 
-    vim.validate{
+    vim.validate {
         name = { name, "string" },
-        info = { info, "table" }
+        info = { info, "table" },
     }
 
     if M.__detect_submode_confliction(name) then
@@ -187,7 +193,7 @@ function M.create(name, info, ...)
         enter = {},
         leave = {},
         enter_cb = function() end,
-        leave_cb = function() end
+        leave_cb = function() end,
     })
     state.submode_to_info[name] = info
     state.submode_to_mappings[name] = {}
@@ -209,12 +215,12 @@ end
 function M.register(name, ...)
     local state = M.state
 
-    vim.validate{
+    vim.validate {
         name = { name, "string" },
     }
 
     state.submode_to_mappings[name] = state.submode_to_mappings[name] or {}
-    for _, map_pre in ipairs{ ... } do
+    for _, map_pre in ipairs { ... } do
         local maps = convert_map_pre_to_maps(map_pre)
         for lhs, element in pairs(maps) do
             -- If rhs is function, call rhs with lhs.
@@ -222,7 +228,9 @@ function M.register(name, ...)
             -- returned string will be used if opts.expr is true.
             local actual_rhs = element.rhs
             if type(element.rhs) == "function" then
-                actual_rhs = function() return element.rhs(lhs) end
+                actual_rhs = function()
+                    return element.rhs(lhs)
+                end
             end
             element.opts = element.opts or {}
 
@@ -230,8 +238,8 @@ function M.register(name, ...)
                 return
             end
             state.submode_to_mappings[name][lhs] = {
-                rhs  = actual_rhs,
-                opts = element.opts
+                rhs = actual_rhs,
+                opts = element.opts,
             }
         end
     end
@@ -268,8 +276,8 @@ end
 function M.enter(name)
     local state = M.state
 
-    vim.validate{
-        name = { name, "string" }
+    vim.validate {
+        name = { name, "string" },
     }
 
     -- Validate given submode's name.
@@ -297,17 +305,19 @@ function M.enter(name)
 
     -- Register leave keys to global and all buffers
     state.leave_bufs = utils.get_list_bufs()
-    for _, leave in ipairs(utils.listlize(info.leave) --[=[@as string[]]=]) do
+    for _, leave in
+        ipairs(utils.listlize(info.leave) --[=[@as string[]]=])
+    do
         vim.api.nvim_set_keymap(info.mode, leave, "", {
             callback = function()
                 M.leave()
-            end
+            end,
         })
         for _, buf in ipairs(utils.get_list_bufs()) do
             vim.api.nvim_buf_set_keymap(buf, info.mode, leave, "", {
                 callback = function()
                     M.leave()
-                end
+                end,
             })
         end
     end
@@ -331,7 +341,9 @@ function M.leave()
     local info = state.submode_to_info[name]
 
     -- Delete leave keys from global and all buffers
-    for _, leave in ipairs(utils.listlize(info.leave) --[=[@as string[]]=]) do
+    for _, leave in
+        ipairs(utils.listlize(info.leave) --[=[@as string[]]=])
+    do
         vim.api.nvim_del_keymap(info.mode, leave)
         for _, buf in ipairs(state.leave_bufs) do
             if vim.api.nvim_buf_is_valid(buf) then

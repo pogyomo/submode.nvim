@@ -21,17 +21,18 @@
 ---@param buf  integer? Buffer handle or 0 for current buffer, or nil for global.
 ---@return KeymapInfo
 local function get_keymap(mode, buf)
-    vim.validate{
+    vim.validate {
         mode = {
             mode,
             function(s)
+                -- stylua: ignore
                 return vim.list_contains({
                     "n", "v", "x", "s", "o", "i", "l", "c", "t", "!", ""
                 }, s)
             end,
-            "n, v, x, s, o, i, l, c, t, ! or ''"
+            "n, v, x, s, o, i, l, c, t, ! or ''",
         },
-        buf = { buf, { "number", "nil" } }
+        buf = { buf, { "number", "nil" } },
     }
 
     local getter = function(m)
@@ -62,15 +63,15 @@ local function get_keymap(mode, buf)
             lhs = map.lhs,
             rhs = map.rhs or "",
             opts = {
-                silent   = map.silent == 1,
-                noremap  = map.noremap == 1,
-                script   = map.script == 1,
-                expr     = map.expr == 1,
-                nowait   = map.nowait == 1,
-                desc     = map.desc,
+                silent = map.silent == 1,
+                noremap = map.noremap == 1,
+                script = map.script == 1,
+                expr = map.expr == 1,
+                nowait = map.nowait == 1,
+                desc = map.desc,
                 callback = map.callback,
-                replace_keycodes = map.replace_keycodes and map.replace_keycodes == 1
-            }
+                replace_keycodes = map.replace_keycodes and map.replace_keycodes == 1,
+            },
         })
     end
     return ret

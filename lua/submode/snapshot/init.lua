@@ -1,5 +1,5 @@
 local keymap = require("submode.snapshot.keymap")
-local utils  = require("submode.utils")
+local utils = require("submode.utils")
 
 ---@class SnapshotManager
 ---@field mode_to_snapshot table<ShortenMode, Snapshot>
@@ -15,9 +15,9 @@ local M = {}
 ---@return SnapshotManager
 function M:new()
     return setmetatable({
-        mode_to_snapshot = {}
+        mode_to_snapshot = {},
     }, {
-        __index = self
+        __index = self,
     })
 end
 
@@ -33,7 +33,7 @@ function M:create(mode)
     end
     self.mode_to_snapshot[mode] = {
         global = global,
-        buffer = buffer
+        buffer = buffer,
     }
 end
 
