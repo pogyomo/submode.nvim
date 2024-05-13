@@ -28,3 +28,49 @@ require("submode").create("LspOperator", {
     rhs = function() vim.lsp.buf.references() end,
 })
 ```
+
+* Enable keymaps which is appropriate for reading help when open help.
+
+```lua
+mods["submode"].create("DocReader", {
+    mode = "n",
+}, {
+    lhs = "<Enter>",
+    rhs = "<C-]>",
+}, {
+    lhs = "u",
+    rhs = "<cmd>po<cr>",
+}, {
+    lhs = { "r", "U" },
+    rhs = "<cmd>ta<cr>",
+}, {
+    lhs = "q",
+    rhs = "<cmd>q<cr>",
+})
+
+vim.api.nvim_create_augroup("DocReaderAugroup", {})
+vim.api.nvim_create_autocmd("BufEnter", {
+    group = "DocReaderAugroup",
+    callback = function()
+        if vim.opt.ft:get() == "help" and not vim.bo.modifiable then
+            mods["submode"].enter("DocReader")
+        end
+    end,
+})
+vim.api.nvim_create_autocmd("BufLeave", {
+    group = "DocReaderAugroup",
+    callback = function()
+        if mods["submode"].mode() == "DocReader" then
+            mods["submode"].leave()
+        end
+    end,
+})
+vim.api.nvim_create_autocmd("CmdwinEnter", {
+    group = "DocReaderAugroup",
+    callback = function()
+        if mods["submode"].mode() == "DocReader" then
+            mods["submode"].leave()
+        end
+    end,
+})
+```
