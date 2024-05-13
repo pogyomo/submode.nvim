@@ -32,7 +32,7 @@ require("submode").create("LspOperator", {
 * Enable keymaps which is appropriate for reading help when open help.
 
 ```lua
-mods["submode"].create("DocReader", {
+require("submode").create("DocReader", {
     mode = "n",
 }, {
     lhs = "<Enter>",
