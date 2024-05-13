@@ -61,15 +61,7 @@ vim.api.nvim_create_autocmd("BufEnter", {
         end
     end,
 })
-vim.api.nvim_create_autocmd("BufLeave", {
-    group = "DocReaderAugroup",
-    callback = function()
-        if submode.mode() == "DocReader" then
-            submode.leave()
-        end
-    end,
-})
-vim.api.nvim_create_autocmd("CmdwinEnter", {
+vim.api.nvim_create_autocmd({ "BufLeave", "CmdwinEnter" }, {
     group = "DocReaderAugroup",
     callback = function()
         if submode.mode() == "DocReader" then
