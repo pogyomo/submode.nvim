@@ -7,7 +7,9 @@ This plugin privide apis to create a submode and manipulate it.
 * Submode to switch to lsp-related keymaps.
 
 ```lua
-require("submode").create("LspOperator", {
+local submode = require("submode")
+
+submode.create("LspOperator", {
     mode = "n",
     enter = "<Space>l",
     leave = { "q", "<ESC>" },
@@ -32,7 +34,9 @@ require("submode").create("LspOperator", {
 * Enable keymaps which is appropriate for reading help when open help.
 
 ```lua
-require("submode").create("DocReader", {
+local submode = require("submode")
+
+submode.create("DocReader", {
     mode = "n",
 }, {
     lhs = "<Enter>",
@@ -53,23 +57,23 @@ vim.api.nvim_create_autocmd("BufEnter", {
     group = "DocReaderAugroup",
     callback = function()
         if vim.opt.ft:get() == "help" and not vim.bo.modifiable then
-            require("submode").enter("DocReader")
+            submode.enter("DocReader")
         end
     end,
 })
 vim.api.nvim_create_autocmd("BufLeave", {
     group = "DocReaderAugroup",
     callback = function()
-        if require("submode").mode() == "DocReader" then
-            require("submode").leave()
+        if submode.mode() == "DocReader" then
+            submode.leave()
         end
     end,
 })
 vim.api.nvim_create_autocmd("CmdwinEnter", {
     group = "DocReaderAugroup",
     callback = function()
-        if require("submode").mode() == "DocReader" then
-            require("submode").leave()
+        if submode.mode() == "DocReader" then
+            submode.leave()
         end
     end,
 })
