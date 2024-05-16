@@ -114,8 +114,11 @@ of |submode.create()|.
             end
         end
     }, {
-        lhs = { "a", "b" },
-        rhs = function(lhs) state = lhs == "a" and 1 or 2 end
+        lhs = "a",
+        rhs = function() state = 1 end,
+    }, {
+        lhs = "b",
+        rhs = function() state = 2 end,
     })
 <
 ==============================================================================
