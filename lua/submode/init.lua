@@ -3,6 +3,7 @@ local mode = require("submode.mode")
 local snapshot = require("submode.snapshot")
 
 if vim.fn.has("nvim-0.10.0") == 0 then
+    ---@diagnostic disable-next-line
     vim.list_contains = function(list, value)
         for _, v in ipairs(list) do
             if v == value then
@@ -223,22 +224,11 @@ function M.register(name, ...)
     for _, map_pre in ipairs { ... } do
         local maps = convert_map_pre_to_maps(map_pre)
         for lhs, element in pairs(maps) do
-            -- If rhs is function, call rhs with lhs.
-            -- Also, I need add 'return' because
-            -- returned string will be used if opts.expr is true.
-            local actual_rhs = element.rhs
-            if type(element.rhs) == "function" then
-                actual_rhs = function()
-                    return element.rhs(lhs)
-                end
-            end
-            element.opts = element.opts or {}
-
             if M.__detect_mapping_confliction(name, lhs) then
                 return
             end
             state.submode_to_mappings[name][lhs] = {
-                rhs = actual_rhs,
+                rhs = element.rhs,
                 opts = element.opts,
             }
         end

@@ -24,13 +24,13 @@
 
 ---Infomation of mapping except lhs.
 ---@class SubmodeMappingElement
----@field rhs string | fun(lhs: string):string?
+---@field rhs string | fun():string?
 ---@field opts? table
 
 ---Mapping infomation which user pass.
 ---@class SubmodeMappingPre
 ---@field lhs string | string[]
----@field rhs string | fun(lha: string):string?
+---@field rhs string | fun():string?
 ---@field opts? table
 
 ---@class SubmodeSetupConfig

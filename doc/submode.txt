@@ -179,9 +179,7 @@ register({name}, {map} ...)                               *submode.register()*
         {name}    (string) Name of submode.
         {map}     Mapping infomation to register with following keys.
                   - lhs (string | string[]): keys to enter this submode.
-                  - rhs (string | fun(lhs: string):string?): Behavior of this
-                  keymap. If it is function, this take a pressed keys as a
-                  string.
+                  - rhs (string | fun():string?): Behavior of this keymap.
                   - opts (table) optional: Options of this keymap. See {opts}
                   of |vim.keymap.set()|.
 
