@@ -15,19 +15,19 @@ submode.create("LspOperator", {
     leave = { "q", "<ESC>" },
 }, {
     lhs = "d",
-    rhs = function() vim.lsp.buf.definition() end,
+    rhs = vim.lsp.buf.definition,
 }, {
     lhs = "D",
-    rhs = function() vim.lsp.buf.declaration() end,
+    rhs = vim.lsp.buf.declaration,
 }, {
     lhs = "H",
-    rhs = function() vim.lsp.buf.hover() end,
+    rhs = vim.lsp.buf.hover,
 }, {
     lhs = "i",
-    rhs = function() vim.lsp.buf.implementation() end,
+    rhs = vim.lsp.buf.implementation,
 }, {
     lhs = "r",
-    rhs = function() vim.lsp.buf.references() end,
+    rhs = vim.lsp.buf.references,
 })
 ```
 
