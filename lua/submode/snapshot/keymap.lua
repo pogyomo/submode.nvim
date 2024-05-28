@@ -19,7 +19,7 @@
 
 ---@param mode ShortenMode
 ---@param buf  integer? Buffer handle or 0 for current buffer, or nil for global.
----@return KeymapInfo
+---@return KeymapInfo[]
 local function get_keymap(mode, buf)
     vim.validate {
         mode = {
