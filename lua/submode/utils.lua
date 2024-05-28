@@ -27,13 +27,8 @@ end
 ---Get all buffers.
 ---@return integer[]
 function M.get_list_bufs()
-    local bufs = {}
-    for buf = 1, vim.fn.bufnr("$") do
-        if vim.fn.bufexists(buf) == 1 then
-            bufs[#bufs + 1] = buf
-        end
-    end
-    return bufs
+    -- TODO: Should I remove unloaded buffers?
+    return vim.api.nvim_list_bufs()
 end
 
 return M
