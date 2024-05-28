@@ -1,10 +1,9 @@
 local utils = require("submode.utils")
 
+---Returns current mode
 ---@return string
 local function mode()
-    -- TODO: Replace vim.fn.mode with vim.api.nvim_get_mode
-    --       if the replacement doesn't change old behavior
-    return vim.fn.mode(1) --[[@as string]]
+    return vim.api.nvim_get_mode().mode
 end
 
 local M = {}
