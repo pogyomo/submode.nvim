@@ -1,7 +1,7 @@
 local M = {}
 
 ---Take value-function paired map, then call a function
----associated to target. If not exist, call default.
+---associated with target. If not exist, call default.
 ---@generic T
 ---@generic U
 ---@param target T
@@ -16,7 +16,7 @@ function M.match(target, map, default)
     end
 end
 
----Convert a value to list which maybe list.
+---Convert a value which maybe list to list.
 ---@generic T
 ---@param target T | T[]
 ---@return T[]

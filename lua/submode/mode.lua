@@ -8,7 +8,7 @@ end
 
 local M = {}
 
----@return boolean # True, or false if not in normal mode.
+---@return boolean # False if not in normal mode.
 function M.is_normal_mode()
     local pat1 = string.find(mode(), "^n") ~= nil
     local pat2 = string.find(mode(), "^ni.*") ~= nil
@@ -16,7 +16,7 @@ function M.is_normal_mode()
     return pat1 or pat2 or pat3
 end
 
----@return boolean # True, or false if not in visual mode.
+---@return boolean # False if not in visual mode.
 function M.is_visual_mode()
     local pat1 = string.find(mode(), "^v.*") ~= nil
     local pat2 = string.find(mode(), "^V.*") ~= nil
@@ -24,22 +24,22 @@ function M.is_visual_mode()
     return pat1 or pat2 or pat3
 end
 
----@return boolean # True, or false if not in operator-pending mode.
+---@return boolean # False if not in operator-pending mode.
 function M.is_o_pending_mode()
     return string.find(mode(), "^no.*") ~= nil
 end
 
----@return boolean # True, or false if not in insert mode.
+---@return boolean # False if not in insert mode.
 function M.is_insert_mode()
     return string.find(mode(), "^i.*") ~= nil
 end
 
----@return boolean # True, or false if not in cmdline mode.
+---@return boolean # False if not in cmdline mode.
 function M.is_cmdline_mode()
     return string.find(mode(), "^c.*") ~= nil
 end
 
----@return boolean # True, or false if not in select mode.
+---@return boolean # False if not in select mode.
 function M.is_select_mode()
     local pat1 = string.find(mode(), "^s") ~= nil
     local pat2 = string.find(mode(), "^S") ~= nil
@@ -47,7 +47,7 @@ function M.is_select_mode()
     return pat1 or pat2 or pat3
 end
 
----@return boolean # True, or false if not in select mode.
+---@return boolean # False if not in select mode.
 function M.is_terminal_mode()
     return string.find(mode(), "^t") ~= nil
 end
