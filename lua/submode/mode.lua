@@ -6,6 +6,20 @@ local function mode()
     return vim.api.nvim_get_mode().mode
 end
 
+---Returns a function which returns true if any of function in `preds` returns true.
+---@param preds (fun(): boolean)[]
+---@return fun(): boolean
+local function fany(preds)
+    return function()
+        for _, pred in ipairs(preds) do
+            if pred() then
+                return true
+            end
+        end
+        return false
+    end
+end
+
 local M = {}
 
 ---@return boolean # False if not in normal mode.
@@ -59,9 +73,7 @@ function M.is_parent_same(submode, name)
     local parent = submode.state.submode_to_info[name].mode
     return utils.match(parent, {
         ["n"] = M.is_normal_mode,
-        ["v"] = function()
-            return M.is_visual_mode() or M.is_select_mode()
-        end,
+        ["v"] = fany { M.is_visual_mode, M.is_select_mode },
         ["o"] = M.is_o_pending_mode,
         ["i"] = M.is_insert_mode,
         ["c"] = M.is_cmdline_mode,
@@ -72,12 +84,8 @@ function M.is_parent_same(submode, name)
             error("Currently submode.nvim dosen't accept 'l' as parent mode")
         end,
         ["t"] = M.is_terminal_mode,
-        ["!"] = function()
-            return M.is_insert_mode() or M.is_cmdline_mode()
-        end,
-        [""] = function()
-            return M.is_normal_mode() or M.is_visual_mode() or M.is_o_pending_mode()
-        end,
+        ["!"] = fany { M.is_insert_mode, M.is_cmdline_mode },
+        [""] = fany { M.is_normal_mode, M.is_visual_mode, M.is_o_pending_mode },
     }, function()
         error(("Parent of the submode %s is invalid: %s"):format(name, parent))
     end)
