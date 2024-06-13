@@ -150,7 +150,7 @@ function M.create(name, info, ...)
         vim.validate {
             lhs = { map.lhs, "string" },
             rhs = { map.rhs, { "string", "function" } },
-            opts = { map.opts, "table" },
+            opts = { map.opts, "table", true },
         }
         M.state.submode_to_default_mappings[name][map.lhs] = {
             rhs = map.rhs,
