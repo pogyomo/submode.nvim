@@ -95,6 +95,8 @@ With [lazy.nvim](https://github.com/folke/lazy.nvim)
 return {
     "pogyomo/submode.nvim",
     lazy = true,
+    -- (recommended) specify version to prevent unexpected change.
+    -- version = "5.2.0",
 }
 ```
 
