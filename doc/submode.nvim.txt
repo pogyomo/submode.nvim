@@ -13,7 +13,8 @@ Table of Contents                             *submode.nvim-table-of-contents*
 ==============================================================================
 1. submode.nvim                                    *submode.nvim-submode.nvim*
 
-This plugin privide apis to create a submode and manipulate it.
+This plugin privide apis to create a submode and manipulate it. These apis can
+be used on the fly: no need to call config like other plugin.
 
 
 REQUIREMENTS                          *submode.nvim-submode.nvim-requirements*
@@ -185,8 +186,6 @@ EXAMPLES                                  *submode.nvim-submode.nvim-examples*
 
 APIS                                          *submode.nvim-submode.nvim-apis*
 
-- `setup()`
-    - Initialize this plugin.
 - `create(name, info, ...)`
     - Create a new submode.
     - `name: string` Name of this submode.
