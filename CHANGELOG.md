@@ -1,5 +1,16 @@
 # Changelog
 
+## [5.0.0](https://github.com/pogyomo/submode.nvim/compare/v4.1.0...v5.0.0) (2024-06-13)
+
+
+### ⚠ BREAKING CHANGES
+
+* emit user events and remove `enter_cb` and `leave_cb`
+
+### Features
+
+* emit user events and remove `enter_cb` and `leave_cb` ([114bba2](https://github.com/pogyomo/submode.nvim/commit/114bba2215cc8c849676ba59c9ed41deb91ff953))
+
 ## [4.1.0](https://github.com/pogyomo/submode.nvim/compare/v4.0.0...v4.1.0) (2024-06-13)
 
 
