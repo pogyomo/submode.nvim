@@ -194,8 +194,6 @@ The following user events will be triggered.
         - `mode_name?: string | fun(): string` Change the value `mode()` returns.
         - `enter?: string | string[]` Keys to enter to this submode.
         - `leave?: string | string[]` Keys to leave from this submode.
-        - `enter_cb?: function` Callback to be called when enter to submode.
-        - `leave_cb?: function` Callback to be called when leave from submode.
         - `leave_when_mode_changed?: boolean` Whether leave from current submode or not when parent mode is changed i.e. changed normal mode to visual mode. Default is false.
         - `override_behavior?: string` Behavior when the submode already exist. Accept following strings.
             - `"error"` Throw error. This is default.
