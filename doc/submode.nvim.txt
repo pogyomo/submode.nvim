@@ -136,7 +136,7 @@ For example, the submode `WinMove` also can be defined as follow:
     submode.set("WinMove", "l", "<C-w>l")
 <
 
-If you create a plugin and wann to provide a submode using this, it is
+If you created a plugin and want to provide a submode using this, it is
 preferred `submode.create` to define mappings as it allow user to override
 default mappings or remove overrided mappings to restore default mappings.
 
