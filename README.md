@@ -23,17 +23,17 @@ submode.create("WinMove", {
     mode = "n",
     enter = "<C-w>",
     leave = { "q", "<ESC>" },
-})
-submode.default("WinMove", "h", "<C-w>h")
-submode.default("WinMove", "j", "<C-w>j")
-submode.default("WinMove", "k", "<C-w>k")
-submode.default("WinMove", "l", "<C-w>l")
-submode.seal("WinMove")
+}, function(default)
+    default("h", "<C-w>h")
+    default("j", "<C-w>j")
+    default("k", "<C-w>k")
+    default("l", "<C-w>l")
+end) -- WinMove is sealed here
 ```
 
 This submode has default mappings `hjkl` for moving around windows, and you can enter this submode by pressing `<C-w>` when in normal mode. Once you enter this submode, you can use `hjkl`. You can leave from this submode by pressing `q` or `escape`, and after that `hjkl` cannot be used to move windows anymore.
 
-You can define default mappings with automatical seal as follow:
+You can define default mappings by passing list of table, or manually call `submode.default` and `submode.seal`:
 
 ```lua
 -- Passing tables to define mappings.
@@ -54,25 +54,26 @@ submode.create("WinMove", {
 }, {
     lhs = "l",
     rhs = "<C-w>l",
-})
--- WinMove is sealed here
+}) -- WinMove is sealed here
 ```
 
 ```lua
--- Passing callback with register function to register mappings.
 local submode = require("submode")
 submode.create("WinMove", {
     mode = "n",
     enter = "<C-w>",
     leave = { "q", "<ESC>" },
-}, function(default)
-    default("h", "<C-w>h")
-    default("j", "<C-w>j")
-    default("k", "<C-w>k")
-    default("l", "<C-w>l")
-end)
--- WinMove is sealed here
+})
+submode.default("WinMove", "h", "<C-w>h")
+submode.default("WinMove", "j", "<C-w>j")
+submode.default("WinMove", "k", "<C-w>k")
+submode.default("WinMove", "l", "<C-w>l")
+submode.seal("WinMove") -- Should be called to seal this submode to prevent unexpected `submode.default`
 ```
+
+If you call `submode.default` manually, you have to call `submode.seal` as the submode must be sealed with it to prevent unexpected call of `submode.default`.
+
+Once the submode is sealed, the submode can be exposed to outside safely: any plugin can provide its own submode.
 
 Next, sometimes you may want to add a mappings to exist submode to extend the behavior of the submode. Is it possible in this plugin? The answer is yes. 
 
@@ -89,13 +90,15 @@ submode.create("test", {
 end)
 ```
 
-Then, if you want to add `2` to notify `2`, you can achieve it with the following code.
+The submode doesn't accept `submode.default` as it already sealed, so you have to use `submode.set` instead to add mappings.
+
+It means, if you want to add `2` to notify `2`, you can achieve it with the following code.
 
 ```lua
 submode.set("test", "2", function() vim.notify("2") end)
 ```
 
-Using the `submode.set`, you can add arbitrary mappings to a submode. This interface is compatible with `vim.keymap.set`, so you can easily define mappings the way you are used to.
+This interface is compatible with `vim.keymap.set`, so you can easily define mappings the way you are used to.
 
 Just as neovim provides `vim.keymap.del`, this plugin provides its compatible interface: `submode.del`. You can use it like as `vim.keymap.set`.
 
