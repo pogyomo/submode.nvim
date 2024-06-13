@@ -1,5 +1,16 @@
 # Changelog
 
+## [4.0.0](https://github.com/pogyomo/submode.nvim/compare/v3.0.0...v4.0.0) (2024-06-13)
+
+
+### ⚠ BREAKING CHANGES
+
+* remove `setup` as this plugin doesn't require no config
+
+### Features
+
+* remove `setup` as this plugin doesn't require no config ([bb9b69f](https://github.com/pogyomo/submode.nvim/commit/bb9b69f09b40d00303512632892208a6e5d8c8a5))
+
 ## [3.0.0](https://github.com/pogyomo/submode.nvim/compare/v2.1.0...v3.0.0) (2024-06-13)
 
 
