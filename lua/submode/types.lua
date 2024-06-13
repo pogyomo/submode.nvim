@@ -5,7 +5,8 @@
 ---@class SubmodeState
 ---@field current_mode string Represent current mode, or empty string if not in submode.
 ---@field submode_to_info table<string, SubmodeInfo> Infomation of the submode.
----@field submode_to_mappings table<string, SubmodeMappings> Mappings of the submode.
+---@field submode_to_user_mappings table<string, SubmodeMappings> User mappings of the submode.
+---@field submode_to_default_mappings table<string, SubmodeMappings> Default mappings of the submode.
 ---@field snapshot SnapshotManager
 ---@field leave_bufs integer[] Buffers where leave key registered.
 
@@ -33,10 +34,12 @@
 ---@field rhs string | fun():string?
 ---@field opts? table
 
+---Default mapping infomation.
+---@class SubmodeDefaultMapping
+---@field lhs string
+---@field rhs string | fun():string?
+---@field opts? table
+
 ---@class SubmodeSetupConfig
 ---@field leave_when_mode_changed boolean Leave from submode when parent mode is changed.
----@field when_mapping_exist WhenMappingExistType Behavior when mapping conflict.
----@field when_submode_exist WhenSubmodeExistType Behavior when submode exist.
-
----@alias WhenMappingExistType "error" | "keep" | "override"
----@alias WhenSubmodeExistType "error" | "keep" | "override"
+---@field when_submode_exist "error" | "keep" | "override" Behavior when submode exist.

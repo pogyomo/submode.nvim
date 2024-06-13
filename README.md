@@ -37,6 +37,37 @@ submode.create("WinMove", {
 
 The submode is on normal mode, and you can enter this submode by pressing `<C-w>` when in normal mode. Once you enter this submode, you can use `hjkl` to move around windows, and finally you can exit from this submode by pressing `q` or `escape`.
 
+Sometimes you may want to add a mappings to exist submode to extend the behavior of the submode. Is it possible in this plugin? The answer is yes. For example, you have a submode defined as follow.
+
+```lua
+local submode = require("submode")
+submode.create("test", {
+    mode = "n",
+    enter = "]",
+    leave = { "q", "<ESC>" },
+}, {
+    lhs = "1",
+    rhs = function() vim.notify("1") end,
+})
+```
+
+Then, if you want to add `2` to notify `2`, you can achieve it with the following code.
+
+```lua
+submode.set("test", "2", function() vim.notify("2") end)
+```
+
+Using the `submode.set`, you can add arbitrary mappings to a submode. This interface is compatible with `vim.keymap.set`, so you can easily define mappings the way you are used to.
+
+Just as neovim provides `vim.keymap.del`, this plugin provides its compatible interface: `submode.del`. You can use it like as `vim.keymap.set`.
+
+```lua
+submode.del("test", "2")
+```
+
+One additional notable point is that mappings created by `submode.create` doesn't change as if `submode.set` and `submode.del` is called in the order. 
+For example, if we call `submode.set("test", "1", "")`, this disable the behavior of `1` in `test`, but if we call `submode.del("test", "1")` after that, pressing `1` will notify `1`.
+
 ## :inbox_tray: Installation
 
 With [lazy.nvim](https://github.com/folke/lazy.nvim)
@@ -122,10 +153,6 @@ vim.api.nvim_create_autocmd({ "BufLeave", "CmdwinEnter" }, {
     - Initialize this plugin.
     - `config?: table` Config of the submode. Have the following fields.
         - `leave_when_mode_changed?: boolean` Whether leave from current submode or not when mode is changed. Default is false.
-        - `when_mapping_exist?: string` Behavior when mapping already exist. Accept following strings.
-            - `"error"` Throw error. This is default.
-            - `"keep"` Keep current mapping.
-            - `"override"` Override old mapping.
         - `when_submode_exist?: string` Behavior when submode already exist. Accept following strings.
             - `"error"` Throw error. This is default.
             - `"keep"` Keep current submode.
@@ -142,8 +169,8 @@ vim.api.nvim_create_autocmd({ "BufLeave", "CmdwinEnter" }, {
         - `leave?: string | string[]` Keys to leave from this submode.
         - `enter_cb?: function` Callback to be called when enter to submode.
         - `leave_cb?: function` Callback to be called when leave from submode.
-    - `...: table` Mappings for this submode. Have the following fields.
-        - `lhs: string | string[]` Lhs of keymap. Same as `lhs` of `vim.keymap.set`. Can be multiple.
+    - `...: table` Default mappings for this submode. These keymap doesn't change when we calls `submode.set` and `submode.del` for the mapping. Have the following fields.
+        - `lhs: string` Lhs of keymap. Same as `lhs` of `vim.keymap.set`.
         - `rhs: string | fun():string?` Rhs of keymap. Same as `rhs` of `vim.keymap.set`.
         - `opts?: table` Options of this keymap. Same as `opts` of `vim.keymap.set`.
 

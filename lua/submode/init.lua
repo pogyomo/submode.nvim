@@ -2,26 +2,6 @@ local utils = require("submode.utils")
 local mode = require("submode.mode")
 local snapshot = require("submode.snapshot")
 
----Convert SubmodeMappingPre to SubmodeMappings.
----This doesn't affect to map.rhs and map.opts.
----@param map SubmodeMappingPre
----@return SubmodeMappings
-local function convert_map_pre_to_maps(map)
-    vim.validate {
-        map = { map, "table" },
-    }
-
-    local ret = {}
-    local listlized_lhs = utils.listlize(map.lhs)
-    for _, lhs in ipairs(listlized_lhs) do
-        ret[lhs] = {
-            rhs = map.rhs,
-            opts = map.opts,
-        }
-    end
-    return ret
-end
-
 ---Validate config.
 ---@param config SubmodeSetupConfig Config to validate.
 local function validate_config(config)
@@ -29,17 +9,6 @@ local function validate_config(config)
         leave_when_mode_changed = {
             config.leave_when_mode_changed,
             "boolean",
-        },
-        when_mapping_exist = {
-            config.when_mapping_exist,
-            function(s)
-                return vim.list_contains({
-                    "error",
-                    "keep",
-                    "override",
-                }, s)
-            end,
-            "error, keep or override",
         },
         when_submode_exist = {
             config.when_submode_exist,
@@ -60,7 +29,8 @@ end
 local default_state = {
     current_mode = "",
     submode_to_info = {},
-    submode_to_mappings = {},
+    submode_to_user_mappings = {},
+    submode_to_default_mappings = {},
     snapshot = snapshot:new(),
     leave_bufs = {},
 }
@@ -69,7 +39,6 @@ local default_state = {
 ---@class SubmodeSetupConfig
 local default_config = {
     leave_when_mode_changed = false,
-    when_mapping_exist = "error",
     when_submode_exist = "error",
 }
 
@@ -95,25 +64,6 @@ local function detect_submode_confliction(name)
         return false
     elseif M.config.when_submode_exist == "keep" then
         return M.state.submode_to_info[name] ~= nil
-    else
-        return false
-    end
-end
-
----Detect mapping confliction.
----@param name string Name of submode to check.
----@param lhs string Lhs of the mapping.
----@return boolean # True if mapping exist and when_mapping_exist isn't override.
-local function detect_mapping_confliction(name, lhs)
-    if M.config.when_mapping_exist == "error" then
-        if not M.state.submode_to_mappings[name][lhs] then
-            return false
-        end
-        local err_msg = "Mapping confliction detected in %s: %s is already exist."
-        error(err_msg:format(name, lhs))
-        return true
-    elseif M.config.when_mapping_exist == "keep" then
-        return M.state.submode_to_mappings[name][lhs] ~= nil
     else
         return false
     end
@@ -163,7 +113,7 @@ end
 ---Create a new submode.
 ---@param name string Name of this submode.
 ---@param info SubmodeInfo Infomation of this submode.
----@param ...  SubmodeMappingPre Mappings to register to this submode.
+---@param ...  SubmodeDefaultMapping Default mappings for this submode.
 function M.create(name, info, ...)
     local state = M.state
 
@@ -185,7 +135,8 @@ function M.create(name, info, ...)
         leave_cb = function() end,
     })
     state.submode_to_info[name] = info
-    state.submode_to_mappings[name] = {}
+    state.submode_to_user_mappings[name] = {}
+    state.submode_to_default_mappings[name] = {}
 
     local listlized_enter = utils.listlize(info.enter) --[=[@as string[]]=]
     for _, enter in ipairs(listlized_enter) do
@@ -195,24 +146,22 @@ function M.create(name, info, ...)
     end
 
     ---Register mappings.
-    for _, map_pre in ipairs { ... } do
-        local maps = convert_map_pre_to_maps(map_pre)
-        for lhs, element in pairs(maps) do
-            M.set(name, lhs, element.rhs, element.opts)
-        end
+    for _, map in ipairs { ... } do
+        M.state.submode_to_default_mappings[name][map.lhs] = {
+            rhs = map.rhs,
+            opts = map.opts,
+        }
     end
 end
 
 ---Register mapping to submode.
 ---@param name string Name of target submode.
----@param ... SubmodeMappingPre Mappings to register.
 function M.register(name, ...)
-    vim.deprecate("submode.register", "submode.set", "2.0.0", "submode.nvim")
+    vim.deprecate("submode.register", "submode.set", "3.0.0", "submode.nvim")
 
-    for _, map_pre in ipairs { ... } do
-        local maps = convert_map_pre_to_maps(map_pre)
-        for lhs, element in pairs(maps) do
-            M.set(name, lhs, element.rhs, element.opts)
+    for _, map in ipairs { ... } do
+        for _, lhs in utils.listlize(map.lhs) do
+            M.set(name, lhs, map.rhs, map.opts)
         end
     end
 end
@@ -230,10 +179,7 @@ function M.set(name, lhs, rhs, opts)
         opts = { opts, "table", true },
     }
 
-    if detect_mapping_confliction(name, lhs) then
-        return
-    end
-    M.state.submode_to_mappings[name][lhs] = {
+    M.state.submode_to_user_mappings[name][lhs] = {
         rhs = rhs,
         opts = opts,
     }
@@ -250,7 +196,7 @@ function M.del(name, lhs, opts)
         opts = { opts, "table", true },
     }
 
-    M.state.submode_to_mappings[name][lhs] = nil
+    M.state.submode_to_user_mappings[name][lhs] = nil
 end
 
 ---Return current submode, or nil if not in submode
@@ -306,8 +252,15 @@ function M.enter(name)
     -- Create snapshot
     state.snapshot:create(info.mode)
 
-    -- Register mappings
-    for lhs, map in pairs(state.submode_to_mappings[name] or {}) do
+    -- Register default mappings
+    for lhs, map in pairs(state.submode_to_default_mappings[name] or {}) do
+        if not state.submode_to_user_mappings[name][lhs] then
+            vim.keymap.set(info.mode, lhs, map.rhs, map.opts)
+        end
+    end
+
+    -- Register user mappings
+    for lhs, map in pairs(state.submode_to_user_mappings[name] or {}) do
         vim.keymap.set(info.mode, lhs, map.rhs, map.opts)
     end
 
@@ -361,9 +314,16 @@ function M.leave()
     end
     state.leave_bufs = {}
 
-    -- Delete mappings
-    for lhs, _ in pairs(state.submode_to_mappings[state.current_mode] or {}) do
+    -- Delete user mappings
+    for lhs, _ in pairs(state.submode_to_user_mappings[state.current_mode] or {}) do
         vim.keymap.del(info.mode, lhs)
+    end
+
+    -- Delete default mappings
+    for lhs, _ in pairs(state.submode_to_default_mappings[state.current_mode] or {}) do
+        if not state.submode_to_user_mappings[name][lhs] then
+            vim.keymap.del(info.mode, lhs)
+        end
     end
 
     -- Restore previous keymaps from created snapshot
