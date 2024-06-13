@@ -16,6 +16,8 @@ This plugin is in development stage and breaking changes may occure to apis. We 
 
 This plugin allow users to create submode, which has almost same keymaps as the parent mode like normal, insert, etc, but some keymaps is changed and is defined by user.
 
+### :rocket: Create a submode
+
 For example, when we try to move around windows, we need to press `<C-w>h`, `<C-w>j`, `<C-w>k` and `<C-w>l` multiple times.
 Therefore, it would be useful to be able to press `<C-w>` and then `hjkl` to move the window.
 
@@ -36,6 +38,8 @@ end)
 ```
 
 This submode has default mappings `hjkl` for moving around windows, and you can enter this submode by pressing `<C-w>` when in normal mode. Once you enter this submode, you can use `hjkl`. You can leave from this submode by pressing `q` or `escape`, and after that `hjkl` cannot be used to move windows anymore.
+
+### :mag: Extend exists submode
 
 Next, sometimes you may want to add a mappings to exist submode to extend the behavior of the submode. Is it possible in this plugin? The answer is yes. 
 
@@ -69,6 +73,31 @@ submode.del("test", "2")
 One additional notable point is that default mappings created by `submode.create` doesn't change even if `submode.set` and `submode.del` is called in the order. 
 
 For example, if we call `submode.set("test", "1", "")`, this disable the behavior of `1` in `test`, but if we call `submode.del("test", "1")` after that, pressing `1` will notify `1`.
+
+### :pinching_hand: Use different of `submode.create` and `submode.set`
+
+We introduced two type of mappings: default mappings defined by `submode.create` and mappings defined by `submode.set`. So, how to use different?
+
+The first is intended to provide a default mappings to user by submode creator, and second intended that user extend exist submode provided by someone.
+
+As far as personal use, you can use either of way freely.
+
+For example, the submode `WinMove` also can be defined as follow:
+
+```lua
+local submode = require("submode")
+submode.create("WinMove", {
+    mode = "n",
+    enter = "<C-w>",
+    leave = { "q", "<ESC>" },
+})
+submode.set("WinMove", "h", "<C-w>h")
+submode.set("WinMove", "j", "<C-w>j")
+submode.set("WinMove", "k", "<C-w>k")
+submode.set("WinMove", "l", "<C-w>l")
+```
+
+If you create a plugin and wann to provide a submode using this, it is preferred `submode.create` to define mappings as it allow user to override default mappings or remove overrided mappings to restore default mappings.
 
 ## :inbox_tray: Installation
 
