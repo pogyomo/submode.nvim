@@ -10,7 +10,7 @@ This plugin is in development stage and breaking changes may occure to apis. We 
 
 ## :clipboard: Requirements
 
-* Neovim >= 0.10.0
+- Neovim >= 0.10.0
 
 ## :notebook: Introduction
 
@@ -97,7 +97,7 @@ submode.set("WinMove", "k", "<C-w>k")
 submode.set("WinMove", "l", "<C-w>l")
 ```
 
-If you create a plugin and wann to provide a submode using this, it is preferred `submode.create` to define mappings as it allow user to override default mappings or remove overrided mappings to restore default mappings.
+If you created a plugin and want to provide a submode using this, it is preferred `submode.create` to define mappings as it allow user to override default mappings or remove overrided mappings to restore default mappings.
 
 ## :inbox_tray: Installation
 
@@ -114,7 +114,7 @@ return {
 
 ## :bulb: Examples
 
-* Submode to switch to lsp-related keymaps.
+- Submode to switch to lsp-related keymaps.
 
 ```lua
 local submode = require("submode")
@@ -132,7 +132,7 @@ submode.create("LspOperator", {
 end)
 ```
 
-* Enable keymaps which is appropriate for reading help when open help.
+- Enable keymaps which is appropriate for reading help when open help.
 
 ```lua
 local submode = require("submode")
