@@ -195,6 +195,13 @@ The following user events will be triggered.
         - `rhs: string | fun():string?` Rhs of keymap. Same as `rhs` of `vim.keymap.set`.
         - `opts?: table` Options of this keymap. Same as `opts` of `vim.keymap.set`.
 
+- `default(name, lhs, rhs, opts)`
+    - Add a default mapping to `name`. Same interface as `vim.keymap.set`.
+    - `name: string` Name of target submode.
+    - `lhs: string` Lhs of mapping.
+    - `rhs: string | fun():string?` Rhs of mapping. Can be function.
+    - `opts?: table` Options of this mapping. Same as `opts` of `vim.keymap.set`.
+
 - `set(name, lhs, rhs, opts)`
     - Add a mapping to `name`. Same interface as `vim.keymap.set`.
     - `name: string` Name of target submode.

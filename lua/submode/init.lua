@@ -61,17 +61,8 @@ function M.create(name, info, ...)
         end)
     end
 
-    ---Register mappings.
     for _, map in ipairs { ... } do
-        vim.validate {
-            lhs = { map.lhs, "string" },
-            rhs = { map.rhs, { "string", "function" } },
-            opts = { map.opts, "table", true },
-        }
-        M.state.submode_to_default_mappings[name][map.lhs] = {
-            rhs = map.rhs,
-            opts = map.opts,
-        }
+        M.default(name, map.lhs, map.rhs, map.opts)
     end
 
     if info.leave_when_mode_changed then
@@ -85,7 +76,33 @@ function M.create(name, info, ...)
     end
 end
 
----Add a mapping to `name`. Same interface as `vim.keymap.set`
+---Add a default mapping to `name`. Same interface as `vim.keymap.set`.
+---@param name string Name of target submode.
+---@param lhs string Lhs of mapping.
+---@param rhs string | fun():string? Rhs of mapping. Can be function.
+---@param opts? table Options of this mapping. Same as `opts` of `vim.keymap.set`.
+function M.default(name, lhs, rhs, opts)
+    vim.validate {
+        name = { name, "string" },
+        lhs = { lhs, "string" },
+        rhs = { rhs, { "string", "function" } },
+        opts = { opts, "table", true },
+    }
+
+    if M.state.current_mode ~= "" then
+        vim.notify("`submode.default` must not be called when submode is actived", vim.log.levels.ERROR, {
+            title = "submode.nvim",
+        })
+        return
+    end
+
+    M.state.submode_to_default_mappings[name][lhs] = {
+        rhs = rhs,
+        opts = opts,
+    }
+end
+
+---Add a mapping to `name`. Same interface as `vim.keymap.set`.
 ---@param name string Name of target submode.
 ---@param lhs string Lhs of mapping.
 ---@param rhs string | fun():string? Rhs of mapping. Can be function.
