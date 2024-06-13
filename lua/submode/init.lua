@@ -36,6 +36,7 @@ function M.create(name, info, ...)
             vim.notify(string.format("%s already exists", name), vim.log.levels.ERROR, {
                 title = "submode.nvim",
             })
+            return
         elseif state.submode_to_info[name].override_behavior == "keep" then
             return
         end
@@ -167,18 +168,22 @@ end
 ---@param name string Name of submode to enter.
 function M.enter(name)
     local state = M.state
+    local info = state.submode_to_info[name]
 
     vim.validate {
         name = { name, "string" },
     }
 
     -- Validate given submode's name.
-    local info = state.submode_to_info[name]
-    assert(info ~= nil, ("No such submode exist: %s"):format(name))
+    if not info then
+        vim.notify(string.format("no such submode exist: %s", name), vim.log.levels.ERROR, {
+            title = "submode.nvim",
+        })
+        return
+    end
 
     -- Validate that current mode and submode's parent mode is same
-    local parent_is_same = mode.is_parent_same(M, name)
-    if not parent_is_same then
+    if not mode.is_parent_same(M, name) then
         return
     end
 
@@ -199,15 +204,15 @@ function M.enter(name)
     state.snapshot:create(info.mode)
 
     -- Register default mappings
-    for lhs, map in pairs(state.submode_to_default_mappings[name] or {}) do
+    for lhs, element in pairs(state.submode_to_default_mappings[name] or {}) do
         if not state.submode_to_user_mappings[name][lhs] then
-            vim.keymap.set(info.mode, lhs, map.rhs, map.opts)
+            vim.keymap.set(info.mode, lhs, element.rhs, element.opts)
         end
     end
 
     -- Register user mappings
-    for lhs, map in pairs(state.submode_to_user_mappings[name] or {}) do
-        vim.keymap.set(info.mode, lhs, map.rhs, map.opts)
+    for lhs, element in pairs(state.submode_to_user_mappings[name] or {}) do
+        vim.keymap.set(info.mode, lhs, element.rhs, element.opts)
     end
 
     -- Register leave keys to global and all buffers
