@@ -111,7 +111,7 @@ interface: `submode.del`. You can use it like as `vim.keymap.set`.
 <
 
 One additional notable point is that mappings created by `submode.create`, or
-defined by `submode.default` doesn’t change as if `submode.set` and
+defined by `submode.default` doesn’t change even if `submode.set` and
 `submode.del` is called in the order.
 
 For example, if we call `submode.set("test", "1", "")`, this disable the
