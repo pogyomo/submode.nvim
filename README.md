@@ -79,7 +79,7 @@ return {
     "pogyomo/submode.nvim",
     lazy = true,
     -- (recommended) specify version to prevent unexpected change.
-    -- version = "5.2.0",
+    -- version = "6.0.0",
 }
 ```
 
