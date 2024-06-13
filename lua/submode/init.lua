@@ -22,7 +22,7 @@ local M = {
 ---Create a new submode.
 ---@param name string Name of this submode.
 ---@param info SubmodeInfo Infomation of this submode.
----@param ...  SubmodeDefaultMapping Default mappings for this submode.
+---@param ...  SubmodeDefaultMapping | fun(default: SubmodeDefaultMappingRegister) Default mappings or register.
 function M.create(name, info, ...)
     local state = M.state
 
@@ -62,10 +62,6 @@ function M.create(name, info, ...)
         end)
     end
 
-    for _, map in ipairs { ... } do
-        M.default(name, map.lhs, map.rhs, map.opts)
-    end
-
     if info.leave_when_mode_changed then
         vim.api.nvim_create_autocmd("ModeChanged", {
             group = vim.api.nvim_create_augroup(string.format("submode-%s-augroup", name), {}),
@@ -75,6 +71,21 @@ function M.create(name, info, ...)
             end,
         })
     end
+
+    local maps = { ... }
+    if #maps == 0 then
+        return
+    end
+    for _, map in ipairs(maps) do
+        if type(map) == "function" then
+            map(function(lhs, rhs, opts)
+                M.default(name, lhs, rhs, opts)
+            end)
+        else
+            M.default(name, map.lhs, map.rhs, map.opts)
+        end
+    end
+    M.seal(name)
 end
 
 ---Seal submode so that no additional `submode.default` will be refused.

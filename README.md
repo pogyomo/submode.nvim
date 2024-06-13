@@ -33,9 +33,10 @@ submode.seal("WinMove")
 
 This submode has default mappings `hjkl` for moving around windows, and you can enter this submode by pressing `<C-w>` when in normal mode. Once you enter this submode, you can use `hjkl`. You can leave from this submode by pressing `q` or `escape`, and after that `hjkl` cannot be used to move windows anymore.
 
-You can write the submode only use `submode.create` if you want:
+You can define default mappings with automatical seal as follow:
 
 ```lua
+-- Passing tables to define mappings.
 local submode = require("submode")
 submode.create("WinMove", {
     mode = "n",
@@ -54,7 +55,23 @@ submode.create("WinMove", {
     lhs = "l",
     rhs = "<C-w>l",
 })
-submode.seal("WinMove")
+-- WinMove is sealed here
+```
+
+```lua
+-- Passing callback with register function to register mappings.
+local submode = require("submode")
+submode.create("WinMove", {
+    mode = "n",
+    enter = "<C-w>",
+    leave = { "q", "<ESC>" },
+}, function(default)
+    default("h", "<C-w>h")
+    default("j", "<C-w>j")
+    default("k", "<C-w>k")
+    default("l", "<C-w>l")
+end)
+-- WinMove is sealed here
 ```
 
 Next, sometimes you may want to add a mappings to exist submode to extend the behavior of the submode. Is it possible in this plugin? The answer is yes. 
@@ -67,9 +84,9 @@ submode.create("test", {
     mode = "n",
     enter = "]",
     leave = { "q", "<ESC>" },
-})
-submode.default("test", "1", function() vim.notify("1") end)
-submode.seal("test")
+}, function(default)
+    default("1", function() vim.notify("1") end)
+end)
 ```
 
 Then, if you want to add `2` to notify `2`, you can achieve it with the following code.
@@ -114,12 +131,13 @@ submode.create("LspOperator", {
     mode = "n",
     enter = "<Space>l",
     leave = { "q", "<ESC>" },
-})
-submode.default("LspOperator", "d", vim.lsp.buf.definition)
-submode.default("LspOperator", "D", vim.lsp.buf.declaration)
-submode.default("LspOperator", "H", vim.lsp.buf.hover)
-submode.default("LspOperator", "i", vim.lsp.buf.implementation)
-submode.default("LspOperator", "r", vim.lsp.buf.references)
+}, function(default)
+    default("d", vim.lsp.buf.definition)
+    default("D", vim.lsp.buf.declaration)
+    default("H", vim.lsp.buf.hover)
+    default("i", vim.lsp.buf.implementation)
+    default("r", vim.lsp.buf.references)
+end)
 ```
 
 * Enable keymaps which is appropriate for reading help when open help.
@@ -129,13 +147,13 @@ local submode = require("submode")
 
 submode.create("DocReader", {
     mode = "n",
-})
-submode.default("DocReader", "<Enter>", "<C-]>")
-submode.default("DocReader", "u", "<cmd>po<cr>")
-submode.default("DocReader", "r", "<cmd>ta<cr>")
-submode.default("DocReader", "U", "<cmd>ta<cr>")
-submode.default("DocReader", "q", "<cmd>q<cr>")
-submode.seal("DocReader")
+}, function(default)
+    default("<Enter>", "<C-]>")
+    default("u", "<cmd>po<cr>")
+    default("r", "<cmd>ta<cr>")
+    default("U", "<cmd>ta<cr>")
+    default("q", "<cmd>q<cr>")
+end)
 
 vim.api.nvim_create_augroup("DocReaderAugroup", {})
 vim.api.nvim_create_autocmd("BufEnter", {
@@ -191,10 +209,14 @@ The following user events will be triggered.
             - `"error"` Throw error. This is default.
             - `"keep"` Keep current submode.
             - `"override"` Override old submode.
-    - `...: table` Default mappings for this submode. The functional is same as `submode.default`. Have the following fields.
-        - `lhs: string` Lhs of mapping.
-        - `rhs: string | fun():string?` Rhs of mapping. Can be function.
-        - `opts?: table` Options of this mapping. Same as `opts` of `vim.keymap.set`.
+    - `...: table | function` Default mappings for this submode.
+        - If a element is table, has a following fields:
+            - `lhs: string` Lhs of mapping.
+            - `rhs: string | fun():string?` Rhs of mapping. Can be function.
+            - `opts?: table` Options of this mapping. Same as `opts` of `vim.keymap.set`.
+        - If a element is function, the parameter is as follow:
+            - `default: fun(lhs: string, rhs: string | function, opts?: table)` Register given mapping to this submode when called.
+        - If at least one value is supplied, these mappings is registered and this submode is sealed automatically.
 
 - `seal(name)`
     - Seal submode so that no additional `submode.default` will be refused.
