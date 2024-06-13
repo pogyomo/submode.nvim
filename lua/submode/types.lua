@@ -1,6 +1,5 @@
 ---@class Submode
 ---@field state SubmodeState Internal state of submode
----@field config SubmodeSetupConfig Config of this plugin.
 
 ---@class SubmodeState
 ---@field current_mode string Represent current mode, or empty string if not in submode.
