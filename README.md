@@ -23,6 +23,23 @@ submode.create("WinMove", {
     mode = "n",
     enter = "<C-w>",
     leave = { "q", "<ESC>" },
+})
+submode.default("WinMove", "h", "<C-w>h")
+submode.default("WinMove", "j", "<C-w>j")
+submode.default("WinMove", "k", "<C-w>k")
+submode.default("WinMove", "l", "<C-w>l")
+```
+
+This submode has default mappings `hjkl` for moving around windows, and you can enter this submode by pressing `<C-w>` when in normal mode. Once you enter this submode, you can use `hjkl`. You can leave from this submode by pressing `q` or `escape`, and after that `hjkl` cannot be used to move windows anymore.
+
+You can write the submode only use `submode.create` if you want:
+
+```lua
+local submode = require("submode")
+submode.create("WinMove", {
+    mode = "n",
+    enter = "<C-w>",
+    leave = { "q", "<ESC>" },
 }, {
     lhs = "h",
     rhs = "<C-w>h",
@@ -38,9 +55,9 @@ submode.create("WinMove", {
 })
 ```
 
-The submode is on normal mode, and you can enter this submode by pressing `<C-w>` when in normal mode. Once you enter this submode, you can use `hjkl` to move around windows, and finally you can exit from this submode by pressing `q` or `escape`.
+Next, sometimes you may want to add a mappings to exist submode to extend the behavior of the submode. Is it possible in this plugin? The answer is yes. 
 
-Sometimes you may want to add a mappings to exist submode to extend the behavior of the submode. Is it possible in this plugin? The answer is yes. For example, you have a submode defined as follow.
+For example, you have a submode defined as follow.
 
 ```lua
 local submode = require("submode")
@@ -48,10 +65,8 @@ submode.create("test", {
     mode = "n",
     enter = "]",
     leave = { "q", "<ESC>" },
-}, {
-    lhs = "1",
-    rhs = function() vim.notify("1") end,
 })
+submode.default("test", "1", function() vim.notify("1") end)
 ```
 
 Then, if you want to add `2` to notify `2`, you can achieve it with the following code.
@@ -68,7 +83,7 @@ Just as neovim provides `vim.keymap.del`, this plugin provides its compatible in
 submode.del("test", "2")
 ```
 
-One additional notable point is that mappings created by `submode.create` doesn't change as if `submode.set` and `submode.del` is called in the order. 
+One additional notable point is that mappings created by `submode.create`, or defined by `submode.default` doesn't change as if `submode.set` and `submode.del` is called in the order. 
 
 For example, if we call `submode.set("test", "1", "")`, this disable the behavior of `1` in `test`, but if we call `submode.del("test", "1")` after that, pressing `1` will notify `1`.
 
@@ -94,22 +109,12 @@ submode.create("LspOperator", {
     mode = "n",
     enter = "<Space>l",
     leave = { "q", "<ESC>" },
-}, {
-    lhs = "d",
-    rhs = vim.lsp.buf.definition,
-}, {
-    lhs = "D",
-    rhs = vim.lsp.buf.declaration,
-}, {
-    lhs = "H",
-    rhs = vim.lsp.buf.hover,
-}, {
-    lhs = "i",
-    rhs = vim.lsp.buf.implementation,
-}, {
-    lhs = "r",
-    rhs = vim.lsp.buf.references,
 })
+submode.default("LspOperator", "d", vim.lsp.buf.definition)
+submode.default("LspOperator", "D", vim.lsp.buf.declaration)
+submode.default("LspOperator", "H", vim.lsp.buf.hover)
+submode.default("LspOperator", "i", vim.lsp.buf.implementation)
+submode.default("LspOperator", "r", vim.lsp.buf.references)
 ```
 
 * Enable keymaps which is appropriate for reading help when open help.
@@ -119,22 +124,12 @@ local submode = require("submode")
 
 submode.create("DocReader", {
     mode = "n",
-}, {
-    lhs = "<Enter>",
-    rhs = "<C-]>",
-}, {
-    lhs = "u",
-    rhs = "<cmd>po<cr>",
-}, {
-    lhs = "r"
-    rhs = "<cmd>ta<cr>",
-}, {
-    lhs = "U",
-    rhs = "<cmd>ta<cr>",
-}, {
-    lhs = "q",
-    rhs = "<cmd>q<cr>",
 })
+submode.default("DocReader", "<Enter>", "<C-]>")
+submode.default("DocReader", "u", "<cmd>po<cr>")
+submode.default("DocReader", "r", "<cmd>ta<cr>")
+submode.default("DocReader", "U", "<cmd>ta<cr>")
+submode.default("DocReader", "q", "<cmd>q<cr>")
 
 vim.api.nvim_create_augroup("DocReaderAugroup", {})
 vim.api.nvim_create_autocmd("BufEnter", {
@@ -190,13 +185,13 @@ The following user events will be triggered.
             - `"error"` Throw error. This is default.
             - `"keep"` Keep current submode.
             - `"override"` Override old submode.
-    - `...: table` Default mappings for this submode. These keymap doesn't change when we calls `submode.set` and `submode.del` for the mapping. Have the following fields.
-        - `lhs: string` Lhs of keymap. Same as `lhs` of `vim.keymap.set`.
-        - `rhs: string | fun():string?` Rhs of keymap. Same as `rhs` of `vim.keymap.set`.
-        - `opts?: table` Options of this keymap. Same as `opts` of `vim.keymap.set`.
+    - `...: table` Default mappings for this submode. The functional is same as `submode.default`. Have the following fields.
+        - `lhs: string` Lhs of mapping.
+        - `rhs: string | fun():string?` Rhs of mapping. Can be function.
+        - `opts?: table` Options of this mapping. Same as `opts` of `vim.keymap.set`.
 
 - `default(name, lhs, rhs, opts)`
-    - Add a default mapping to `name`. Works same as when you passed these values to `...` of `submode.create`. Same interface as `vim.keymap.set`.
+    - Add a default mapping to `name`. The default mapping doesn't change when we calls `submode.set` and `submode.del` for the mapping. Same interface as `vim.keymap.set`.
     - `name: string` Name of target submode.
     - `lhs: string` Lhs of mapping.
     - `rhs: string | fun():string?` Rhs of mapping. Can be function.
