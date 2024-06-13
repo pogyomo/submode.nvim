@@ -4,6 +4,10 @@ This plugin provide apis to create a submode and manipulate it.
 
 These apis can be used on-the-fly: no need to call config like other plugin.
 
+## :warning: Warning
+
+This plugin is in development stage and breaking changes may occure to apis. We recommend you to pin version for prevent unexpected change.
+
 ## :clipboard: Requirements
 
 * Neovim >= 0.10.0
