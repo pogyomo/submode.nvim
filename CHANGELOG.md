@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.1.0](https://github.com/pogyomo/submode.nvim/compare/v1.0.0...v1.1.0) (2024-06-13)
+
+
+### Features
+
+* add `set` and `del`, and deprecate `register` ([bd7fcc0](https://github.com/pogyomo/submode.nvim/commit/bd7fcc0c5c95fd3e703bba49c4e495dc31ff185e))
+
 ## 1.0.0 (2024-06-12)
 
 
