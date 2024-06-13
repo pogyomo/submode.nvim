@@ -196,7 +196,7 @@ The following user events will be triggered.
         - `opts?: table` Options of this keymap. Same as `opts` of `vim.keymap.set`.
 
 - `default(name, lhs, rhs, opts)`
-    - Add a default mapping to `name`. Same interface as `vim.keymap.set`.
+    - Add a default mapping to `name`. Works same as when you passed these values to `...` of `submode.create`. Same interface as `vim.keymap.set`.
     - `name: string` Name of target submode.
     - `lhs: string` Lhs of mapping.
     - `rhs: string | fun():string?` Rhs of mapping. Can be function.
