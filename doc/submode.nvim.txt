@@ -4,6 +4,7 @@
 Table of Contents                             *submode.nvim-table-of-contents*
 
 1. submode.nvim                                    |submode.nvim-submode.nvim|
+  - Warning                                |submode.nvim-submode.nvim-warning|
   - Requirements                      |submode.nvim-submode.nvim-requirements|
   - Introduction                      |submode.nvim-submode.nvim-introduction|
   - Installation                      |submode.nvim-submode.nvim-installation|
@@ -17,6 +18,12 @@ Table of Contents                             *submode.nvim-table-of-contents*
 This plugin provide apis to create a submode and manipulate it.
 
 These apis can be used on-the-fly: no need to call config like other plugin.
+
+
+WARNING                                    *submode.nvim-submode.nvim-warning*
+
+This plugin is in development stage and breaking changes may occure to apis. We
+recommend you to pin version for prevent unexpected change.
 
 
 REQUIREMENTS                          *submode.nvim-submode.nvim-requirements*
