@@ -1,6 +1,8 @@
 # :wrench: submode.nvim
 
-This plugin privide apis to create a submode and manipulate it. These apis can be used on the fly: no need to call config like other plugin.
+This plugin privide apis to create a submode and manipulate it. 
+
+These apis can be used on-the-fly: no need to call config like other plugin.
 
 ## :clipboard: Requirements
 
@@ -12,6 +14,7 @@ This plugin allow users to create submode, which has almost same keymaps as the 
 
 For example, when we try to move around windows, we need to press `<C-w>h`, `<C-w>j`, `<C-w>k` and `<C-w>l` multiple times.
 Therefore, it would be useful to be able to press `<C-w>` and then `hjkl` to move the window.
+
 Fortunately, you can define such submode as follow.
 
 ```lua
@@ -66,6 +69,7 @@ submode.del("test", "2")
 ```
 
 One additional notable point is that mappings created by `submode.create` doesn't change as if `submode.set` and `submode.del` is called in the order. 
+
 For example, if we call `submode.set("test", "1", "")`, this disable the behavior of `1` in `test`, but if we call `submode.del("test", "1")` after that, pressing `1` will notify `1`.
 
 ## :inbox_tray: Installation
@@ -75,6 +79,7 @@ With [lazy.nvim](https://github.com/folke/lazy.nvim)
 ```lua
 return {
     "pogyomo/submode.nvim",
+    lazy = true,
 }
 ```
 
