@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.0.1](https://github.com/pogyomo/submode.nvim/compare/v5.0.0...v5.0.1) (2024-06-13)
+
+
+### Bug Fixes
+
+* abort when submode overriding failed ([2a6e583](https://github.com/pogyomo/submode.nvim/commit/2a6e583323071277d1b9172259541b5f864e5839))
+
 ## [5.0.0](https://github.com/pogyomo/submode.nvim/compare/v4.1.0...v5.0.0) (2024-06-13)
 
 
