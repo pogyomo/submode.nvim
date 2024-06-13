@@ -14,7 +14,7 @@ Table of Contents                             *submode.nvim-table-of-contents*
 ==============================================================================
 1. submode.nvim                                    *submode.nvim-submode.nvim*
 
-This plugin privide apis to create a submode and manipulate it.
+This plugin provide apis to create a submode and manipulate it.
 
 These apis can be used on-the-fly: no need to call config like other plugin.
 
@@ -259,7 +259,7 @@ APIS                                          *submode.nvim-submode.nvim-apis*
             - `default: fun(lhs: string, rhs: string | function, opts?: table)` Register given mapping to this submode when called.
         - If at least one value is supplied, these mappings is registered and this submode is sealed automatically.
 - `seal(name)`
-    - Seal submode so that no additional `submode.default` will be refused.
+    - Seal submode so that additional `submode.default` will be refused.
     - `name: string` Name of target submode.
 - `default(name, lhs, rhs, opts)`
     - Add a default mapping to `name`. The default mapping doesn’t change when we calls `submode.set` and `submode.del` for the mapping. Same interface as `vim.keymap.set`.
