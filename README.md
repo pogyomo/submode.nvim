@@ -1,6 +1,6 @@
 # :wrench: submode.nvim
 
-This plugin privide apis to create a submode and manipulate it.
+This plugin privide apis to create a submode and manipulate it. These apis can be used on the fly: no need to call config like other plugin.
 
 ## :clipboard: Requirements
 
@@ -151,9 +151,6 @@ vim.api.nvim_create_autocmd({ "BufLeave", "CmdwinEnter" }, {
 ```
 
 ## :desktop_computer: APIS
-
-- `setup()`
-    - Initialize this plugin.
 
 - `create(name, info, ...)`
     - Create a new submode.
