@@ -6,6 +6,7 @@ local snapshot = require("submode.snapshot")
 ---@class SubmodeState
 local default_state = {
     current_mode = "",
+    submode_is_sealed = {},
     submode_to_info = {},
     submode_to_user_mappings = {},
     submode_to_default_mappings = {},
@@ -76,6 +77,13 @@ function M.create(name, info, ...)
     end
 end
 
+---Seal submode so that no additional `submode.default` will be refused.
+---@param name string Name of target submode.
+function M.seal(name)
+    vim.validate("name", name, "string")
+    M.state.submode_is_sealed[name] = true
+end
+
 ---Add a default mapping to `name`. Same interface as `vim.keymap.set`.
 ---@param name string Name of target submode.
 ---@param lhs string Lhs of mapping.
@@ -88,6 +96,14 @@ function M.default(name, lhs, rhs, opts)
         rhs = { rhs, { "string", "function" } },
         opts = { opts, "table", true },
     }
+
+    if M.state.submode_is_sealed[name] then
+        local message = string.format("`submode.default` called to sealed submode `%s`", name)
+        vim.notify(message, vim.log.levels.ERROR, {
+            table = "submode.nvim",
+        })
+        return
+    end
 
     if M.state.current_mode ~= "" then
         vim.notify("`submode.default` must not be called when submode is actived", vim.log.levels.ERROR, {
