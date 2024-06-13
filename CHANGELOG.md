@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.1.0](https://github.com/pogyomo/submode.nvim/compare/v5.0.1...v5.1.0) (2024-06-13)
+
+
+### Features
+
+* improve error and warning messages ([10e036e](https://github.com/pogyomo/submode.nvim/commit/10e036e22f944223bfc9e7a93ca944eecd7e727f))
+
 ## [5.0.1](https://github.com/pogyomo/submode.nvim/compare/v5.0.0...v5.0.1) (2024-06-13)
 
 
