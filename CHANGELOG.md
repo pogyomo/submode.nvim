@@ -1,5 +1,12 @@
 # Changelog
 
+## [5.2.0](https://github.com/pogyomo/submode.nvim/compare/v5.1.0...v5.2.0) (2024-06-13)
+
+
+### Features
+
+* add `submode.default` for define default mapping ([#18](https://github.com/pogyomo/submode.nvim/issues/18)) ([54d3df4](https://github.com/pogyomo/submode.nvim/commit/54d3df441b543dd42d534b11cc7a11770ef7dbae))
+
 ## [5.1.0](https://github.com/pogyomo/submode.nvim/compare/v5.0.1...v5.1.0) (2024-06-13)
 
 
