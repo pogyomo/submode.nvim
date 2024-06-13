@@ -155,7 +155,7 @@ vim.api.nvim_create_autocmd({ "BufLeave", "CmdwinEnter" }, {
 })
 ```
 
-## :: User Events
+## :date: User Events
 
 The following user events will be triggered.
 
