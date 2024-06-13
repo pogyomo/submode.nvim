@@ -28,6 +28,7 @@ submode.default("WinMove", "h", "<C-w>h")
 submode.default("WinMove", "j", "<C-w>j")
 submode.default("WinMove", "k", "<C-w>k")
 submode.default("WinMove", "l", "<C-w>l")
+submode.seal("WinMove")
 ```
 
 This submode has default mappings `hjkl` for moving around windows, and you can enter this submode by pressing `<C-w>` when in normal mode. Once you enter this submode, you can use `hjkl`. You can leave from this submode by pressing `q` or `escape`, and after that `hjkl` cannot be used to move windows anymore.
@@ -53,6 +54,7 @@ submode.create("WinMove", {
     lhs = "l",
     rhs = "<C-w>l",
 })
+submode.seal("WinMove")
 ```
 
 Next, sometimes you may want to add a mappings to exist submode to extend the behavior of the submode. Is it possible in this plugin? The answer is yes. 
@@ -67,6 +69,7 @@ submode.create("test", {
     leave = { "q", "<ESC>" },
 })
 submode.default("test", "1", function() vim.notify("1") end)
+submode.seal("test")
 ```
 
 Then, if you want to add `2` to notify `2`, you can achieve it with the following code.
@@ -132,6 +135,7 @@ submode.default("DocReader", "u", "<cmd>po<cr>")
 submode.default("DocReader", "r", "<cmd>ta<cr>")
 submode.default("DocReader", "U", "<cmd>ta<cr>")
 submode.default("DocReader", "q", "<cmd>q<cr>")
+submode.seal("DocReader")
 
 vim.api.nvim_create_augroup("DocReaderAugroup", {})
 vim.api.nvim_create_autocmd("BufEnter", {
