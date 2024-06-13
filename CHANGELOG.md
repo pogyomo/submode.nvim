@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.0.0](https://github.com/pogyomo/submode.nvim/compare/v2.1.0...v3.0.0) (2024-06-13)
+
+
+### ⚠ BREAKING CHANGES
+
+* remove config and add options to submode
+
+### Features
+
+* remove config and add options to submode ([80498f2](https://github.com/pogyomo/submode.nvim/commit/80498f25d81d57e636377292a9041bb48e9b7e1e))
+
 ## [2.1.0](https://github.com/pogyomo/submode.nvim/compare/v2.0.0...v2.1.0) (2024-06-13)
 
 
