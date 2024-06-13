@@ -8,6 +8,7 @@ Table of Contents                             *submode.nvim-table-of-contents*
   - Introduction                      |submode.nvim-submode.nvim-introduction|
   - Installation                      |submode.nvim-submode.nvim-installation|
   - Examples                              |submode.nvim-submode.nvim-examples|
+  - User Events                        |submode.nvim-submode.nvim-user-events|
   - APIS                                      |submode.nvim-submode.nvim-apis|
 
 ==============================================================================
@@ -186,6 +187,24 @@ EXAMPLES                                  *submode.nvim-submode.nvim-examples*
         end,
     })
 <
+
+
+USER EVENTS                            *submode.nvim-submode.nvim-user-events*
+
+The following user events will be triggered.
+
+- `SubmodeEnterPre`
+    - Emitted when `submode.enter` called and before process anything.
+    - `data` attribute will hold `name` for corresponding submode name.
+- `SubmodeEnterPost`
+    - Emitted when `submode.enter` called and after all process done.
+    - `data` attribute will hold `name` for corresponding submode name.
+- `SubmodeLeavePre`
+    - Emitted when `submode.leave` called and before process anything.
+    - `data` attribute will hold `name` for corresponding submode name.
+- `SubmodeLeavePost`
+    - Emitted when `submode.leave` called and after all process done.
+    - `data` attribute will hold `name` for corresponding submode name.
 
 
 APIS                                          *submode.nvim-submode.nvim-apis*
