@@ -1,5 +1,16 @@
 # Changelog
 
+## [2.0.0](https://github.com/pogyomo/submode.nvim/compare/v1.1.0...v2.0.0) (2024-06-13)
+
+
+### ⚠ BREAKING CHANGES
+
+* change behavior of `submode.create`
+
+### Features
+
+* change behavior of `submode.create` ([214757c](https://github.com/pogyomo/submode.nvim/commit/214757cfe0a5f77a5669923f645d3b5d0bbf0a74))
+
 ## [1.1.0](https://github.com/pogyomo/submode.nvim/compare/v1.0.0...v1.1.0) (2024-06-13)
 
 
