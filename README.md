@@ -1,6 +1,6 @@
 # :wrench: submode.nvim
 
-This plugin privide apis to create a submode and manipulate it. 
+This plugin provide apis to create a submode and manipulate it. 
 
 These apis can be used on-the-fly: no need to call config like other plugin.
 
@@ -222,7 +222,7 @@ The following user events will be triggered.
         - If at least one value is supplied, these mappings is registered and this submode is sealed automatically.
 
 - `seal(name)`
-    - Seal submode so that no additional `submode.default` will be refused.
+    - Seal submode so that additional `submode.default` will be refused.
     - `name: string` Name of target submode.
 
 - `default(name, lhs, rhs, opts)`
