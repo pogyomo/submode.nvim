@@ -112,7 +112,7 @@ end
 ---Delete a mapping from `name`. Same interface as `vim.keymap.del`.
 ---@param name string Name of target submode.
 ---@param lhs string Lhs of target keymap.
----@param opts? table Options for this deletion. Currently no option is available.
+---@param opts? table Options for this deletion. Same as `opts` in `vim.keymap.del`.
 function M.del(name, lhs, opts)
     vim.validate {
         name = { name, "string" },
@@ -255,15 +255,25 @@ function M.leave()
     state.leave_bufs = {}
 
     -- Delete user mappings
-    for lhs, _ in pairs(state.submode_to_user_mappings[state.current_mode] or {}) do
-        vim.keymap.del(info.mode, lhs)
+    for lhs, element in pairs(state.submode_to_user_mappings[state.current_mode] or {}) do
+        if element.opts and element.opts.buffer then
+            vim.keymap.del(info.mode, lhs, { buffer = element.opts.buffer })
+        else
+            vim.keymap.del(info.mode, lhs)
+        end
     end
 
     -- Delete default mappings
-    for lhs, _ in pairs(state.submode_to_default_mappings[state.current_mode] or {}) do
-        if not state.submode_to_user_mappings[name][lhs] then
+    for lhs, element in pairs(state.submode_to_default_mappings[state.current_mode] or {}) do
+        if state.submode_to_user_mappings[name][lhs] then
+            goto continue
+        end
+        if element.opts and element.opts.buffer then
+            vim.keymap.del(info.mode, lhs, { buffer = element.opts.buffer })
+        else
             vim.keymap.del(info.mode, lhs)
         end
+        ::continue::
     end
 
     -- Restore previous keymaps from created snapshot

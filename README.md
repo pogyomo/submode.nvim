@@ -189,7 +189,7 @@ vim.api.nvim_create_autocmd({ "BufLeave", "CmdwinEnter" }, {
     - Delete a mapping from `name`. Same interface as `vim.keymap.del`.
     - `name: string` Name of target submode.
     - `lhs: string` Lhs of mapping.
-    - `opts?: table` Options for this deletion. Currently no option is available.
+    - `opts?: table` Options for this deletion. Same as `opts` of `vim.keymap.del`.
 
 - `enter(name)`
     - Enter the submode. This function only have effect if parent mode of the submode is same as current mode.
