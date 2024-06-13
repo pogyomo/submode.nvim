@@ -33,7 +33,7 @@ function M.create(name, info, ...)
     -- Judge to continue process by checking `override_behavior`.
     if state.submode_to_info[name] then
         if state.submode_to_info[name].override_behavior == "error" then
-            vim.notify(string.format("%s already exists", name), vim.log.levels.ERROR, {
+            vim.notify(string.format("submode `%s` already exists", name), vim.log.levels.ERROR, {
                 title = "submode.nvim",
             })
             return
@@ -176,7 +176,7 @@ function M.enter(name)
 
     -- Validate given submode's name.
     if not info then
-        vim.notify(string.format("no such submode exist: %s", name), vim.log.levels.ERROR, {
+        vim.notify(string.format("submode `%s` doesn't exist", name), vim.log.levels.ERROR, {
             title = "submode.nvim",
         })
         return

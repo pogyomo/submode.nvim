@@ -81,13 +81,19 @@ function M.is_parent_same(submode, name)
         ["x"] = M.is_visual_mode,
         -- TODO: Support 'l' as parent mode
         ["l"] = function()
-            error("Currently submode.nvim dosen't accept 'l' as parent mode")
+            vim.notify("submode for `l` is not implemented yet", vim.log.levels.WARN, {
+                title = "submode.nvim",
+            })
+            return false
         end,
         ["t"] = M.is_terminal_mode,
         ["!"] = fany { M.is_insert_mode, M.is_cmdline_mode },
         [""] = fany { M.is_normal_mode, M.is_visual_mode, M.is_o_pending_mode },
     }, function()
-        error(("Parent of the submode %s is invalid: %s"):format(name, parent))
+        vim.notify(string.format("invalid mode `%s`", parent), vim.log.levels.ERROR, {
+            title = "submode.nvim",
+        })
+        return false
     end)
 end
 
