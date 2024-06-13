@@ -46,8 +46,6 @@ function M.create(name, info, ...)
         show_mode = true,
         enter = {},
         leave = {},
-        enter_cb = function() end,
-        leave_cb = function() end,
         leave_when_mode_changed = false,
         override_behavior = "error",
     })
@@ -184,6 +182,14 @@ function M.enter(name)
         return
     end
 
+    vim.api.nvim_exec_autocmds("User", {
+        pattern = "SubmodeEnterPre",
+        modeline = false,
+        data = {
+            name = name,
+        },
+    })
+
     -- If in another submode, leave from the submode
     if state.current_mode ~= "" then
         M.leave()
@@ -225,21 +231,32 @@ function M.enter(name)
 
     state.current_mode = name
 
-    if state.submode_to_info[name].enter_cb then
-        state.submode_to_info[name].enter_cb()
-    end
+    vim.api.nvim_exec_autocmds("User", {
+        pattern = "SubmodeEnterPost",
+        modeline = false,
+        data = {
+            name = name,
+        },
+    })
 end
 
 ---Leave from current submode.
 function M.leave()
     local state = M.state
+    local name = state.current_mode
+    local info = state.submode_to_info[name]
 
     if state.current_mode == "" then
         return
     end
 
-    local name = state.current_mode
-    local info = state.submode_to_info[name]
+    vim.api.nvim_exec_autocmds("User", {
+        pattern = "SubmodeLeavePre",
+        modeline = false,
+        data = {
+            name = name,
+        },
+    })
 
     -- Delete leave keys from global and all buffers
     for _, leave in
@@ -281,9 +298,13 @@ function M.leave()
 
     state.current_mode = ""
 
-    if state.submode_to_info[name].leave_cb then
-        state.submode_to_info[name].leave_cb()
-    end
+    vim.api.nvim_exec_autocmds("User", {
+        pattern = "SubmodeLeavePost",
+        modeline = false,
+        data = {
+            name = name,
+        },
+    })
 end
 
 return M

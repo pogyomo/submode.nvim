@@ -15,8 +15,6 @@
 ---@field mode_name? string | fun():string
 ---@field enter? string | string[]
 ---@field leave? string | string[]
----@field enter_cb? function
----@field leave_cb? function
 ---@field leave_when_mode_changed? boolean
 ---@field override_behavior? "error" | "keep" | "override"
 

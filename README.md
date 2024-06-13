@@ -155,6 +155,23 @@ vim.api.nvim_create_autocmd({ "BufLeave", "CmdwinEnter" }, {
 })
 ```
 
+## :: User Events
+
+The following user events will be triggered.
+
+- `SubmodeEnterPre` 
+    - Emitted when `submode.enter` called and before process anything.
+    - `data` attribute will hold `name` for corresponding submode name.
+- `SubmodeEnterPost` 
+    - Emitted when `submode.enter` called and after all process done.
+    - `data` attribute will hold `name` for corresponding submode name.
+- `SubmodeLeavePre` 
+    - Emitted when `submode.leave` called and before process anything.
+    - `data` attribute will hold `name` for corresponding submode name.
+- `SubmodeLeavePost` 
+    - Emitted when `submode.leave` called and after all process done.
+    - `data` attribute will hold `name` for corresponding submode name.
+
 ## :desktop_computer: APIS
 
 - `create(name, info, ...)`
