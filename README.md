@@ -152,14 +152,8 @@ vim.api.nvim_create_autocmd({ "BufLeave", "CmdwinEnter" }, {
 
 ## :desktop_computer: APIS
 
-- `setup(config)`
+- `setup()`
     - Initialize this plugin.
-    - `config?: table` Config of the submode. Have the following fields.
-        - `leave_when_mode_changed?: boolean` Whether leave from current submode or not when mode is changed. Default is false.
-        - `when_submode_exist?: string` Behavior when submode already exist. Accept following strings.
-            - `"error"` Throw error. This is default.
-            - `"keep"` Keep current submode.
-            - `"override"` Override old submode.
 
 - `create(name, info, ...)`
     - Create a new submode.
@@ -172,6 +166,11 @@ vim.api.nvim_create_autocmd({ "BufLeave", "CmdwinEnter" }, {
         - `leave?: string | string[]` Keys to leave from this submode.
         - `enter_cb?: function` Callback to be called when enter to submode.
         - `leave_cb?: function` Callback to be called when leave from submode.
+        - `leave_when_mode_changed?: boolean` Whether leave from current submode or not when parent mode is changed i.e. changed normal mode to visual mode. Default is false.
+        - `override_behavior?: string` Behavior when the submode already exist. Accept following strings.
+            - `"error"` Throw error. This is default.
+            - `"keep"` Keep current submode.
+            - `"override"` Override old submode.
     - `...: table` Default mappings for this submode. These keymap doesn't change when we calls `submode.set` and `submode.del` for the mapping. Have the following fields.
         - `lhs: string` Lhs of keymap. Same as `lhs` of `vim.keymap.set`.
         - `rhs: string | fun():string?` Rhs of keymap. Same as `rhs` of `vim.keymap.set`.

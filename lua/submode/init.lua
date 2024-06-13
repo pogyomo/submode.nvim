@@ -2,28 +2,6 @@ local utils = require("submode.utils")
 local mode = require("submode.mode")
 local snapshot = require("submode.snapshot")
 
----Validate config.
----@param config SubmodeSetupConfig Config to validate.
-local function validate_config(config)
-    vim.validate {
-        leave_when_mode_changed = {
-            config.leave_when_mode_changed,
-            "boolean",
-        },
-        when_submode_exist = {
-            config.when_submode_exist,
-            function(s)
-                return vim.list_contains({
-                    "error",
-                    "keep",
-                    "override",
-                }, s)
-            end,
-            "error, keep or override",
-        },
-    }
-end
-
 ---Default state of this plugin
 ---@class SubmodeState
 local default_state = {
@@ -35,13 +13,6 @@ local default_state = {
     leave_bufs = {},
 }
 
----Default config of this plugin
----@class SubmodeSetupConfig
-local default_config = {
-    leave_when_mode_changed = false,
-    when_submode_exist = "error",
-}
-
 ---@class Submode
 local M = {}
 
@@ -49,54 +20,12 @@ local M = {}
 ---All mappings and config will be lost.
 local function initialize_submode()
     M.state = vim.deepcopy(default_state)
-    M.config = vim.deepcopy(default_config)
-end
-
----Detect submode confliction.
----@param name string Name of submode.
----@return boolean # True if submode exist and when_submode_exist isn't override.
-local function detect_submode_confliction(name)
-    if M.config.when_submode_exist == "error" then
-        if M.state.submode_to_info[name] then
-            error(("Submode %s already exist."):format(name))
-            return true
-        end
-        return false
-    elseif M.config.when_submode_exist == "keep" then
-        return M.state.submode_to_info[name] ~= nil
-    else
-        return false
-    end
 end
 
 ---Initialize submode.nvim
----@param config? SubmodeSetupConfig
-function M.setup(config)
-    vim.validate {
-        config = { config, "table", true },
-    }
-
-    -- Initialize internal state and config to prevent error when setup is called
-    -- more than once.
+function M.setup()
+    -- Initialize internal state to prevent error when setup is called more than once.
     initialize_submode()
-
-    -- Initialize config with given config.
-    M.config = vim.tbl_extend("keep", config or {}, M.config)
-    validate_config(M.config)
-
-    -- Create autocommand to exit submode when
-    -- parent mode is changed
-    if M.config.leave_when_mode_changed then
-        local name = "submode_augroup"
-        vim.api.nvim_create_augroup(name, {})
-        vim.api.nvim_create_autocmd("ModeChanged", {
-            group = name,
-            pattern = "*",
-            callback = function()
-                M.leave()
-            end,
-        })
-    end
 end
 
 ---Create a new submode.
@@ -111,8 +40,15 @@ function M.create(name, info, ...)
         info = { info, "table" },
     }
 
-    if detect_submode_confliction(name) then
-        return
+    -- Judge to continue process by checking `override_behavior`.
+    if state.submode_to_info[name] then
+        if state.submode_to_info[name].override_behavior == "error" then
+            vim.notify(string.format("%s already exists", name), vim.log.levels.ERROR, {
+                title = "submode.nvim",
+            })
+        elseif state.submode_to_info[name].override_behavior == "keep" then
+            return
+        end
     end
 
     ---@type SubmodeInfo
@@ -122,6 +58,8 @@ function M.create(name, info, ...)
         leave = {},
         enter_cb = function() end,
         leave_cb = function() end,
+        leave_when_mode_changed = false,
+        override_behavior = "error",
     })
     state.submode_to_info[name] = info
     state.submode_to_user_mappings[name] = {}
@@ -146,17 +84,15 @@ function M.create(name, info, ...)
             opts = map.opts,
         }
     end
-end
 
----Register mapping to submode.
----@param name string Name of target submode.
-function M.register(name, ...)
-    vim.deprecate("submode.register", "submode.set", "3.0.0", "submode.nvim")
-
-    for _, map in ipairs { ... } do
-        for _, lhs in utils.listlize(map.lhs) do
-            M.set(name, lhs, map.rhs, map.opts)
-        end
+    if info.leave_when_mode_changed then
+        vim.api.nvim_create_autocmd("ModeChanged", {
+            group = vim.api.nvim_create_augroup(string.format("submode-%s-augroup", name), {}),
+            pattern = "*",
+            callback = function()
+                M.leave()
+            end,
+        })
     end
 end
 

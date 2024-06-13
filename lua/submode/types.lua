@@ -18,6 +18,8 @@
 ---@field leave? string | string[]
 ---@field enter_cb? function
 ---@field leave_cb? function
+---@field leave_when_mode_changed? boolean
+---@field override_behavior? "error" | "keep" | "override"
 
 ---Combination of lhs and element.
 ---@alias SubmodeMappings table<SubmodeMappingLhs, SubmodeMappingElement>
@@ -39,7 +41,3 @@
 ---@field lhs string
 ---@field rhs string | fun():string?
 ---@field opts? table
-
----@class SubmodeSetupConfig
----@field leave_when_mode_changed boolean Leave from submode when parent mode is changed.
----@field when_submode_exist "error" | "keep" | "override" Behavior when submode exist.
