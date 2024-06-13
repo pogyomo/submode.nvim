@@ -1,5 +1,12 @@
 # Changelog
 
+## [4.1.0](https://github.com/pogyomo/submode.nvim/compare/v4.0.0...v4.1.0) (2024-06-13)
+
+
+### Features
+
+* accept `vim.keymap.del` compatible options at `submode.del` ([28686c6](https://github.com/pogyomo/submode.nvim/commit/28686c6da2154b9413ae006156e8cce5004a2bf0))
+
 ## [4.0.0](https://github.com/pogyomo/submode.nvim/compare/v3.0.0...v4.0.0) (2024-06-13)
 
 
