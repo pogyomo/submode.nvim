@@ -1,5 +1,18 @@
 # Changelog
 
+## [2.1.0](https://github.com/pogyomo/submode.nvim/compare/v2.0.0...v2.1.0) (2024-06-13)
+
+
+### Features
+
+* `set` and `del` works in submode ([88e2402](https://github.com/pogyomo/submode.nvim/commit/88e2402068c7592e1da30ae4c42c5b871fe198ca))
+
+
+### Bug Fixes
+
+* add validation when register default mappings ([6322f49](https://github.com/pogyomo/submode.nvim/commit/6322f49b8e6981509d3f7e59f8ee2ece10b16e65))
+* validate `opts` as optional ([1f6ef0c](https://github.com/pogyomo/submode.nvim/commit/1f6ef0c23d247a7bc9883cf1e48ad296c7ebf0e3))
+
 ## [2.0.0](https://github.com/pogyomo/submode.nvim/compare/v1.1.0...v2.0.0) (2024-06-13)
 
 
