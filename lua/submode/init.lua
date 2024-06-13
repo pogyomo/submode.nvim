@@ -14,19 +14,9 @@ local default_state = {
 }
 
 ---@class Submode
-local M = {}
-
----Initialize this plugin's state.
----All mappings and config will be lost.
-local function initialize_submode()
-    M.state = vim.deepcopy(default_state)
-end
-
----Initialize submode.nvim
-function M.setup()
-    -- Initialize internal state to prevent error when setup is called more than once.
-    initialize_submode()
-end
+local M = {
+    state = vim.deepcopy(default_state),
+}
 
 ---Create a new submode.
 ---@param name string Name of this submode.
