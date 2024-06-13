@@ -83,7 +83,7 @@ Just as neovim provides `vim.keymap.del`, this plugin provides its compatible in
 submode.del("test", "2")
 ```
 
-One additional notable point is that mappings created by `submode.create`, or defined by `submode.default` doesn't change as if `submode.set` and `submode.del` is called in the order. 
+One additional notable point is that mappings created by `submode.create`, or defined by `submode.default` doesn't change even if `submode.set` and `submode.del` is called in the order. 
 
 For example, if we call `submode.set("test", "1", "")`, this disable the behavior of `1` in `test`, but if we call `submode.del("test", "1")` after that, pressing `1` will notify `1`.
 
