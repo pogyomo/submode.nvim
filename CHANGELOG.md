@@ -1,5 +1,13 @@
 # Changelog
 
+## [5.3.0](https://github.com/pogyomo/submode.nvim/compare/v5.2.0...v5.3.0) (2024-06-13)
+
+
+### Features
+
+* `create` accept callbacks and automatically seal submode ([#24](https://github.com/pogyomo/submode.nvim/issues/24)) ([de89045](https://github.com/pogyomo/submode.nvim/commit/de8904565c225f1b0532e829d8c54618c3c2f084))
+* add `submode.seal` to refuse `submode.default` ([#21](https://github.com/pogyomo/submode.nvim/issues/21)) ([076d7cd](https://github.com/pogyomo/submode.nvim/commit/076d7cd3ce6913410b21c157788fd49c7183d047))
+
 ## [5.2.0](https://github.com/pogyomo/submode.nvim/compare/v5.1.0...v5.2.0) (2024-06-13)
 
 
