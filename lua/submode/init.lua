@@ -183,6 +183,10 @@ function M.set(name, lhs, rhs, opts)
         rhs = rhs,
         opts = opts,
     }
+
+    if M.state.current_mode == name then
+        vim.keymap.set(M.state.submode_to_info[name].mode, lhs, rhs, opts)
+    end
 end
 
 ---Delete a mapping from `name`. Same interface as `vim.keymap.del`.
@@ -196,7 +200,23 @@ function M.del(name, lhs, opts)
         opts = { opts, "table", true },
     }
 
+    if not M.state.submode_to_user_mappings[name][lhs] then
+        return
+    end
+
     M.state.submode_to_user_mappings[name][lhs] = nil
+
+    if M.state.current_mode == name then
+        vim.keymap.del(M.state.submode_to_info[name].mode, lhs, opts)
+        if M.state.submode_to_default_mappings[name][lhs] then
+            vim.keymap.set(
+                M.state.submode_to_info[name].mode,
+                lhs,
+                M.state.submode_to_default_mappings[name][lhs].rhs,
+                M.state.submode_to_default_mappings[name][lhs].opts
+            )
+        end
+    end
 end
 
 ---Return current submode, or nil if not in submode
