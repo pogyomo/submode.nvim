@@ -78,7 +78,7 @@ local M = {}
 
 ---Initialize this plugin's state.
 ---All mappings and config will be lost.
-function M.__initialize_submode()
+local function initialize_submode()
     M.state = vim.deepcopy(default_state)
     M.config = vim.deepcopy(default_config)
 end
@@ -86,7 +86,7 @@ end
 ---Detect submode confliction.
 ---@param name string Name of submode.
 ---@return boolean # True if submode exist and when_submode_exist isn't override.
-function M.__detect_submode_confliction(name)
+local function detect_submode_confliction(name)
     if M.config.when_submode_exist == "error" then
         if M.state.submode_to_info[name] then
             error(("Submode %s already exist."):format(name))
@@ -104,7 +104,7 @@ end
 ---@param name string Name of submode to check.
 ---@param lhs string Lhs of the mapping.
 ---@return boolean # True if mapping exist and when_mapping_exist isn't override.
-function M.__detect_mapping_confliction(name, lhs)
+local function detect_mapping_confliction(name, lhs)
     if M.config.when_mapping_exist == "error" then
         if not M.state.submode_to_mappings[name][lhs] then
             return false
@@ -139,7 +139,7 @@ function M.setup(config)
 
     -- Initialize internal state and config to prevent error when setup is called
     -- more than once.
-    M.__initialize_submode()
+    initialize_submode()
 
     -- Initialize config with given config.
     M.config = vim.tbl_extend("keep", config or {}, M.config)
@@ -172,7 +172,7 @@ function M.create(name, info, ...)
         info = { info, "table" },
     }
 
-    if M.__detect_submode_confliction(name) then
+    if detect_submode_confliction(name) then
         return
     end
 
@@ -230,7 +230,7 @@ function M.set(name, lhs, rhs, opts)
         opts = { opts, "table", true },
     }
 
-    if M.__detect_mapping_confliction(name, lhs) then
+    if detect_mapping_confliction(name, lhs) then
         return
     end
     M.state.submode_to_mappings[name][lhs] = {
