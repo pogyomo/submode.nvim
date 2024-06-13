@@ -1,5 +1,16 @@
 # Changelog
 
+## [6.0.0](https://github.com/pogyomo/submode.nvim/compare/v5.3.0...v6.0.0) (2024-06-13)
+
+
+### ⚠ BREAKING CHANGES
+
+* remove `default` and `seal`, and change signature of `submode.create` ([#26](https://github.com/pogyomo/submode.nvim/issues/26))
+
+### Features
+
+* remove `default` and `seal`, and change signature of `submode.create` ([#26](https://github.com/pogyomo/submode.nvim/issues/26)) ([e2f3323](https://github.com/pogyomo/submode.nvim/commit/e2f332358b6f04e3cac9623e8449ea7aa1156fcf))
+
 ## [5.3.0](https://github.com/pogyomo/submode.nvim/compare/v5.2.0...v5.3.0) (2024-06-13)
 
 
