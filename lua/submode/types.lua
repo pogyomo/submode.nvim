@@ -3,7 +3,6 @@
 
 ---@class SubmodeState
 ---@field current_mode string Represent current mode, or empty string if not in submode.
----@field submode_is_sealed table<string, boolean> Whether the submode is sealed by `seal` or not.
 ---@field submode_to_info table<string, SubmodeInfo> Infomation of the submode.
 ---@field submode_to_user_mappings table<string, SubmodeMappings> User mappings of the submode.
 ---@field submode_to_default_mappings table<string, SubmodeMappings> Default mappings of the submode.
@@ -25,12 +24,6 @@
 
 ---Infomation of mapping except lhs.
 ---@class SubmodeMappingElement
----@field rhs string | fun():string?
----@field opts? table
-
----Mapping infomation which user pass.
----@class SubmodeMappingPre
----@field lhs string | string[]
 ---@field rhs string | fun():string?
 ---@field opts? table
 

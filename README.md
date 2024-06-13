@@ -32,52 +32,10 @@ submode.create("WinMove", {
     default("j", "<C-w>j")
     default("k", "<C-w>k")
     default("l", "<C-w>l")
-end) -- WinMove is sealed here
+end)
 ```
 
 This submode has default mappings `hjkl` for moving around windows, and you can enter this submode by pressing `<C-w>` when in normal mode. Once you enter this submode, you can use `hjkl`. You can leave from this submode by pressing `q` or `escape`, and after that `hjkl` cannot be used to move windows anymore.
-
-You can define default mappings by passing list of table, or manually call `submode.default` and `submode.seal`:
-
-```lua
--- Passing tables to define mappings.
-local submode = require("submode")
-submode.create("WinMove", {
-    mode = "n",
-    enter = "<C-w>",
-    leave = { "q", "<ESC>" },
-}, {
-    lhs = "h",
-    rhs = "<C-w>h",
-}, {
-    lhs = "j",
-    rhs = "<C-w>j",
-}, {
-    lhs = "k",
-    rhs = "<C-w>k",
-}, {
-    lhs = "l",
-    rhs = "<C-w>l",
-}) -- WinMove is sealed here
-```
-
-```lua
-local submode = require("submode")
-submode.create("WinMove", {
-    mode = "n",
-    enter = "<C-w>",
-    leave = { "q", "<ESC>" },
-})
-submode.default("WinMove", "h", "<C-w>h")
-submode.default("WinMove", "j", "<C-w>j")
-submode.default("WinMove", "k", "<C-w>k")
-submode.default("WinMove", "l", "<C-w>l")
-submode.seal("WinMove") -- Should be called to seal this submode to prevent unexpected `submode.default`
-```
-
-If you call `submode.default` manually, you have to call `submode.seal` as the submode must be sealed with it to prevent unexpected call of `submode.default`.
-
-Once the submode is sealed, the submode can be exposed to outside safely: any plugin can provide its own submode.
 
 Next, sometimes you may want to add a mappings to exist submode to extend the behavior of the submode. Is it possible in this plugin? The answer is yes. 
 
@@ -94,9 +52,7 @@ submode.create("test", {
 end)
 ```
 
-The submode doesn't accept `submode.default` as it already sealed, so you have to use `submode.set` instead to add mappings.
-
-It means, if you want to add `2` to notify `2`, you can achieve it with the following code.
+If you want to add `2` to notify `2`, you can achieve it with the following code.
 
 ```lua
 submode.set("test", "2", function() vim.notify("2") end)
@@ -110,7 +66,7 @@ Just as neovim provides `vim.keymap.del`, this plugin provides its compatible in
 submode.del("test", "2")
 ```
 
-One additional notable point is that mappings created by `submode.create`, or defined by `submode.default` doesn't change even if `submode.set` and `submode.del` is called in the order. 
+One additional notable point is that default mappings created by `submode.create` doesn't change even if `submode.set` and `submode.del` is called in the order. 
 
 For example, if we call `submode.set("test", "1", "")`, this disable the behavior of `1` in `test`, but if we call `submode.del("test", "1")` after that, pressing `1` will notify `1`.
 
@@ -200,7 +156,7 @@ The following user events will be triggered.
 
 ## :desktop_computer: APIS
 
-- `create(name, info, ...)`
+- `create(name, info, register)`
     - Create a new submode.
     - `name: string` Name of this submode.
     - `info: table` Infomation of this submode. Have the following fields.
@@ -216,25 +172,8 @@ The following user events will be triggered.
             - `"error"` Throw error. This is default.
             - `"keep"` Keep current submode.
             - `"override"` Override old submode.
-    - `...: table | function` Default mappings for this submode.
-        - If a element is table, has a following fields:
-            - `lhs: string` Lhs of mapping.
-            - `rhs: string | fun():string?` Rhs of mapping. Can be function.
-            - `opts?: table` Options of this mapping. Same as `opts` of `vim.keymap.set`.
-        - If a element is function, the parameter is as follow:
-            - `default: fun(lhs: string, rhs: string | function, opts?: table)` Register given mapping to this submode when called.
-        - If at least one value is supplied, these mappings is registered and this submode is sealed automatically.
-
-- `seal(name)`
-    - Seal submode so that additional `submode.default` will be refused.
-    - `name: string` Name of target submode.
-
-- `default(name, lhs, rhs, opts)`
-    - Add a default mapping to `name`. The default mapping doesn't change when we calls `submode.set` and `submode.del` for the mapping. Same interface as `vim.keymap.set`.
-    - `name: string` Name of target submode.
-    - `lhs: string` Lhs of mapping.
-    - `rhs: string | fun():string?` Rhs of mapping. Can be function.
-    - `opts?: table` Options of this mapping. Same as `opts` of `vim.keymap.set`.
+    - `register?: function` Callback to register default mappings. Take a following value:
+        - `default: fun(lhs: string, rhs: string | function, opts?: table)` When called, register given default mapping to this submode.
 
 - `set(name, lhs, rhs, opts)`
     - Add a mapping to `name`. Same interface as `vim.keymap.set`.

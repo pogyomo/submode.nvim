@@ -6,7 +6,6 @@ local snapshot = require("submode.snapshot")
 ---@class SubmodeState
 local default_state = {
     current_mode = "",
-    submode_is_sealed = {},
     submode_to_info = {},
     submode_to_user_mappings = {},
     submode_to_default_mappings = {},
@@ -22,14 +21,15 @@ local M = {
 ---Create a new submode.
 ---@param name string Name of this submode.
 ---@param info SubmodeInfo Infomation of this submode.
----@param ...  SubmodeDefaultMapping | fun(default: SubmodeDefaultMappingRegister) Default mappings or register.
-function M.create(name, info, ...)
-    local state = M.state
-
+---@param register? fun(default: SubmodeDefaultMappingRegister) Default mappings register
+function M.create(name, info, register)
     vim.validate {
         name = { name, "string" },
         info = { info, "table" },
+        register = { register, "function", true },
     }
+
+    local state = M.state
 
     -- Judge to continue process by checking `override_behavior`.
     if state.submode_to_info[name] then
@@ -72,61 +72,15 @@ function M.create(name, info, ...)
         })
     end
 
-    local maps = { ... }
-    if #maps == 0 then
+    if not register then
         return
     end
-    for _, map in ipairs(maps) do
-        if type(map) == "function" then
-            map(function(lhs, rhs, opts)
-                M.default(name, lhs, rhs, opts)
-            end)
-        else
-            M.default(name, map.lhs, map.rhs, map.opts)
-        end
-    end
-    M.seal(name)
-end
-
----Seal submode so that no additional `submode.default` will be refused.
----@param name string Name of target submode.
-function M.seal(name)
-    vim.validate("name", name, "string")
-    M.state.submode_is_sealed[name] = true
-end
-
----Add a default mapping to `name`. Same interface as `vim.keymap.set`.
----@param name string Name of target submode.
----@param lhs string Lhs of mapping.
----@param rhs string | fun():string? Rhs of mapping. Can be function.
----@param opts? table Options of this mapping. Same as `opts` of `vim.keymap.set`.
-function M.default(name, lhs, rhs, opts)
-    vim.validate {
-        name = { name, "string" },
-        lhs = { lhs, "string" },
-        rhs = { rhs, { "string", "function" } },
-        opts = { opts, "table", true },
-    }
-
-    if M.state.submode_is_sealed[name] then
-        local message = string.format("`submode.default` called to sealed submode `%s`", name)
-        vim.notify(message, vim.log.levels.ERROR, {
-            table = "submode.nvim",
-        })
-        return
-    end
-
-    if M.state.current_mode ~= "" then
-        vim.notify("`submode.default` must not be called when submode is actived", vim.log.levels.ERROR, {
-            title = "submode.nvim",
-        })
-        return
-    end
-
-    M.state.submode_to_default_mappings[name][lhs] = {
-        rhs = rhs,
-        opts = opts,
-    }
+    register(function(lhs, rhs, opts)
+        M.state.submode_to_default_mappings[name][lhs] = {
+            rhs = rhs,
+            opts = opts,
+        }
+    end)
 end
 
 ---Add a mapping to `name`. Same interface as `vim.keymap.set`.
@@ -211,12 +165,12 @@ end
 ---Enter the submode.
 ---@param name string Name of submode to enter.
 function M.enter(name)
-    local state = M.state
-    local info = state.submode_to_info[name]
-
     vim.validate {
         name = { name, "string" },
     }
+
+    local state = M.state
+    local info = state.submode_to_info[name]
 
     -- Validate given submode's name.
     if not info then
