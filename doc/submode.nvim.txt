@@ -47,6 +47,7 @@ Fortunately, you can define such submode as follow.
     submode.default("WinMove", "j", "<C-w>j")
     submode.default("WinMove", "k", "<C-w>k")
     submode.default("WinMove", "l", "<C-w>l")
+    submode.seal("WinMove")
 <
 
 This submode has default mappings `hjkl` for moving around windows, and you can
@@ -75,6 +76,7 @@ You can write the submode only use `submode.create` if you want:
         lhs = "l",
         rhs = "<C-w>l",
     })
+    submode.seal("WinMove")
 <
 
 Next, sometimes you may want to add a mappings to exist submode to extend the
@@ -90,6 +92,7 @@ For example, you have a submode defined as follow.
         leave = { "q", "<ESC>" },
     })
     submode.default("test", "1", function() vim.notify("1") end)
+    submode.seal("test")
 <
 
 Then, if you want to add `2` to notify `2`, you can achieve it with the
@@ -165,6 +168,7 @@ EXAMPLES                                  *submode.nvim-submode.nvim-examples*
     submode.default("DocReader", "r", "<cmd>ta<cr>")
     submode.default("DocReader", "U", "<cmd>ta<cr>")
     submode.default("DocReader", "q", "<cmd>q<cr>")
+    submode.seal("DocReader")
     
     vim.api.nvim_create_augroup("DocReaderAugroup", {})
     vim.api.nvim_create_autocmd("BufEnter", {
