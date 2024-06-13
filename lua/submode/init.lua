@@ -72,19 +72,8 @@ end
 ---Initialize submode.nvim
 ---@param config? SubmodeSetupConfig
 function M.setup(config)
-    if
-        config and config.setup --[[@as Submode]]
-    then
-        vim.notify(
-            "You are trying to call methods using `:`, which is the old way. Instead, use `.` instead.",
-            vim.log.levels.ERROR,
-            { title = "submode.nvim" }
-        )
-        return
-    end
-
     vim.validate {
-        config = { config, { "table", "nil" } },
+        config = { config, "table", true },
     }
 
     -- Initialize internal state and config to prevent error when setup is called
