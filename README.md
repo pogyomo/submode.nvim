@@ -142,18 +142,23 @@ vim.api.nvim_create_autocmd({ "BufLeave", "CmdwinEnter" }, {
         - `leave?: string | string[]` Keys to leave from this submode.
         - `enter_cb?: function` Callback to be called when enter to submode.
         - `leave_cb?: function` Callback to be called when leave from submode.
-    - `...: table` Mappings to register to this submode. Have the following fields.
+    - `...: table` Mappings for this submode. Have the following fields.
         - `lhs: string | string[]` Lhs of keymap. Same as `lhs` of `vim.keymap.set`. Can be multiple.
         - `rhs: string | fun():string?` Rhs of keymap. Same as `rhs` of `vim.keymap.set`.
         - `opts?: table` Options of this keymap. Same as `opts` of `vim.keymap.set`.
 
-- `register(name, ...)`
-    - Register mappings to submode.
+- `set(name, lhs, rhs, opts)`
+    - Add a mapping to `name`. Same interface as `vim.keymap.set`.
     - `name: string` Name of target submode.
-    - `...: table` Mappings to register. Have the following fields.
-        - `lhs: string | string[]` Lhs of keymap. Same as `lhs` of `vim.keymap.set`. Can be multiple.
-        - `rhs: string | fun():string?` Rhs of keymap. Same as `rhs` of `vim.keymap.set`.
-        - `opts?: table` Options of this keymap. Same as `opts` of `vim.keymap.set`.
+    - `lhs: string` Lhs of mapping.
+    - `rhs: string | fun():string?` Rhs of mapping. Can be function.
+    - `opts?: table` Options of this mapping. Same as `opts` of `vim.keymap.set`.
+
+- `del(name, lhs, opts)`
+    - Delete a mapping from `name`. Same interface as `vim.keymap.del`.
+    - `name: string` Name of target submode.
+    - `lhs: string` Lhs of mapping.
+    - `opts?: table` Options for this deletion. Currently no option is available.
 
 - `enter(name)`
     - Enter the submode. This function only have effect if parent mode of the submode is same as current mode.

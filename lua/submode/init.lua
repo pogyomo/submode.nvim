@@ -195,32 +195,62 @@ function M.create(name, info, ...)
     end
 
     ---Register mappings.
-    M.register(name, ...)
+    for _, map_pre in ipairs { ... } do
+        local maps = convert_map_pre_to_maps(map_pre)
+        for lhs, element in pairs(maps) do
+            M.set(name, lhs, element.rhs, element.opts)
+        end
+    end
 end
 
 ---Register mapping to submode.
 ---@param name string Name of target submode.
 ---@param ... SubmodeMappingPre Mappings to register.
 function M.register(name, ...)
-    local state = M.state
+    vim.deprecate("submode.register", "submode.set", "2.0.0", "submode.nvim")
 
-    vim.validate {
-        name = { name, "string" },
-    }
-
-    state.submode_to_mappings[name] = state.submode_to_mappings[name] or {}
     for _, map_pre in ipairs { ... } do
         local maps = convert_map_pre_to_maps(map_pre)
         for lhs, element in pairs(maps) do
-            if M.__detect_mapping_confliction(name, lhs) then
-                return
-            end
-            state.submode_to_mappings[name][lhs] = {
-                rhs = element.rhs,
-                opts = element.opts,
-            }
+            M.set(name, lhs, element.rhs, element.opts)
         end
     end
+end
+
+---Add a mapping to `name`. Same interface as `vim.keymap.set`
+---@param name string Name of target submode.
+---@param lhs string Lhs of mapping.
+---@param rhs string | fun():string? Rhs of mapping. Can be function.
+---@param opts? table Options of this mapping. Same as `opts` of `vim.keymap.set`.
+function M.set(name, lhs, rhs, opts)
+    vim.validate {
+        name = { name, "string" },
+        lhs = { lhs, "string" },
+        rhs = { rhs, { "string", "function" } },
+        opts = { opts, "table", true },
+    }
+
+    if M.__detect_mapping_confliction(name, lhs) then
+        return
+    end
+    M.state.submode_to_mappings[name][lhs] = {
+        rhs = rhs,
+        opts = opts,
+    }
+end
+
+---Delete a mapping from `name`. Same interface as `vim.keymap.del`.
+---@param name string Name of target submode.
+---@param lhs string Lhs of target keymap.
+---@param opts? table Options for this deletion. Currently no option is available.
+function M.del(name, lhs, opts)
+    vim.validate {
+        name = { name, "string" },
+        lhs = { lhs, "string" },
+        opts = { opts, "table", true },
+    }
+
+    M.state.submode_to_mappings[name][lhs] = nil
 end
 
 ---Return current submode, or nil if not in submode
