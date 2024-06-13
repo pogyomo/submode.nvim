@@ -147,6 +147,11 @@ function M.create(name, info, ...)
 
     ---Register mappings.
     for _, map in ipairs { ... } do
+        vim.validate {
+            lhs = { map.lhs, "string" },
+            rhs = { map.rhs, { "string", "function" } },
+            opts = { map.opts, "table" },
+        }
         M.state.submode_to_default_mappings[name][map.lhs] = {
             rhs = map.rhs,
             opts = map.opts,
