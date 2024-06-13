@@ -121,7 +121,10 @@ submode.create("DocReader", {
     lhs = "u",
     rhs = "<cmd>po<cr>",
 }, {
-    lhs = { "r", "U" },
+    lhs = "r"
+    rhs = "<cmd>ta<cr>",
+}, {
+    lhs = "U",
     rhs = "<cmd>ta<cr>",
 }, {
     lhs = "q",
