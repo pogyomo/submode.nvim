@@ -192,6 +192,10 @@ The following user events will be triggered.
         - `rhs: string | fun():string?` Rhs of mapping. Can be function.
         - `opts?: table` Options of this mapping. Same as `opts` of `vim.keymap.set`.
 
+- `seal(name)`
+    - Seal submode so that no additional `submode.default` will be refused.
+    - `name: string` Name of target submode.
+
 - `default(name, lhs, rhs, opts)`
     - Add a default mapping to `name`. The default mapping doesn't change when we calls `submode.set` and `submode.del` for the mapping. Same interface as `vim.keymap.set`.
     - `name: string` Name of target submode.
