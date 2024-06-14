@@ -45,6 +45,7 @@ function M.create(name, opts, default)
         show_mode = true,
         enter = {},
         leave = {},
+        default = function() end,
         leave_when_mode_changed = false,
         override_behavior = "error",
     })
@@ -69,15 +70,17 @@ function M.create(name, opts, default)
         })
     end
 
-    if not default then
-        return
-    end
-    default(function(lhs, rhs, opts_)
+    local register = function(lhs, rhs, opts_)
         M.state.submode_to_default_mappings[name][lhs] = {
             rhs = rhs,
             opts = opts_,
         }
-    end)
+    end
+    opts.default(register)
+    if default then
+        vim.deprecate("callback to `submode.create`", "`opts`", "7.0.0", "submode.nvim", false)
+        default(register)
+    end
 end
 
 ---Add a mapping to `name`. Same interface as `vim.keymap.set`.

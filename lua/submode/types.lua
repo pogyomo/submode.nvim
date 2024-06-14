@@ -15,6 +15,7 @@
 ---@field mode_name? string | fun():string
 ---@field enter? string | string[]
 ---@field leave? string | string[]
+---@field default? fun(register: SubmodeDefaultMappingRegister)
 ---@field leave_when_mode_changed? boolean
 ---@field override_behavior? "error" | "keep" | "override"
 

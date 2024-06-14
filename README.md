@@ -29,12 +29,13 @@ submode.create("WinMove", {
     mode = "n",
     enter = "<C-w>",
     leave = { "q", "<ESC>" },
-}, function(default)
-    default("h", "<C-w>h")
-    default("j", "<C-w>j")
-    default("k", "<C-w>k")
-    default("l", "<C-w>l")
-end)
+    default = function(register)
+        register("h", "<C-w>h")
+        register("j", "<C-w>j")
+        register("k", "<C-w>k")
+        register("l", "<C-w>l")
+    end
+})
 ```
 
 This submode has default mappings `hjkl` for moving around windows, and you can enter this submode by pressing `<C-w>` when in normal mode. Once you enter this submode, you can use `hjkl`. You can leave from this submode by pressing `q` or `escape`, and after that `hjkl` cannot be used to move windows anymore.
@@ -51,9 +52,10 @@ submode.create("test", {
     mode = "n",
     enter = "]",
     leave = { "q", "<ESC>" },
-}, function(default)
-    default("1", function() vim.notify("1") end)
-end)
+    default = function(register)
+        register("1", function() vim.notify("1") end)
+    end,
+})
 ```
 
 If you want to add `2` to notify `2`, you can achieve it with the following code.
@@ -123,13 +125,14 @@ submode.create("LspOperator", {
     mode = "n",
     enter = "<Space>l",
     leave = { "q", "<ESC>" },
-}, function(default)
-    default("d", vim.lsp.buf.definition)
-    default("D", vim.lsp.buf.declaration)
-    default("H", vim.lsp.buf.hover)
-    default("i", vim.lsp.buf.implementation)
-    default("r", vim.lsp.buf.references)
-end)
+    default = function(register)
+        register("d", vim.lsp.buf.definition)
+        register("D", vim.lsp.buf.declaration)
+        register("H", vim.lsp.buf.hover)
+        register("i", vim.lsp.buf.implementation)
+        register("r", vim.lsp.buf.references)
+    end,
+})
 ```
 
 - Enable keymaps which is appropriate for reading help when open help.
@@ -139,13 +142,14 @@ local submode = require("submode")
 
 submode.create("DocReader", {
     mode = "n",
-}, function(default)
-    default("<Enter>", "<C-]>")
-    default("u", "<cmd>po<cr>")
-    default("r", "<cmd>ta<cr>")
-    default("U", "<cmd>ta<cr>")
-    default("q", "<cmd>q<cr>")
-end)
+    default = function(register)
+        register("<Enter>", "<C-]>")
+        register("u", "<cmd>po<cr>")
+        register("r", "<cmd>ta<cr>")
+        register("U", "<cmd>ta<cr>")
+        register("q", "<cmd>q<cr>")
+    end,
+})
 
 vim.api.nvim_create_augroup("DocReaderAugroup", {})
 vim.api.nvim_create_autocmd("BufEnter", {
@@ -185,7 +189,7 @@ The following user events will be triggered.
 
 ## :desktop_computer: APIS
 
-- `create(name, opts, register)`
+- `create(name, opts, default)`
     - Create a new submode.
     - `name: string` Name of this submode.
     - `opts: table` Options of this submode. Have the following fields.
@@ -194,13 +198,14 @@ The following user events will be triggered.
         - `mode_name?: string | fun(): string` Change the value `mode()` returns.
         - `enter?: string | string[]` Keys to enter to this submode.
         - `leave?: string | string[]` Keys to leave from this submode.
+        - `default?: function` Callback to register default mappings. Take a following value:
+            - `register: fun(lhs: string, rhs: string | function, opts?: table)` When called, this callback register given default mapping to this submode.
         - `leave_when_mode_changed?: boolean` Whether leave from current submode or not when parent mode is changed i.e. changed normal mode to visual mode. Default is false.
         - `override_behavior?: string` Behavior when the submode already exist. Accept following strings.
             - `"error"` Throw error. This is default.
             - `"keep"` Keep current submode.
             - `"override"` Override old submode.
-    - `default?: function` Callback to register default mappings. Take a following value:
-        - `register: fun(lhs: string, rhs: string | function, opts?: table)` When called, register given default mapping to this submode.
+    - `default?: function` Same functional as `opts.default`. This will be removed in future.
 
 - `set(name, lhs, rhs, opts)`
     - Add a mapping to `name`. Same interface as `vim.keymap.set`.
