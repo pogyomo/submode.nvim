@@ -27,10 +27,4 @@
 ---@field rhs string | fun():string?
 ---@field opts? table
 
----Default mapping infomation.
----@class SubmodeDefaultMapping
----@field lhs string
----@field rhs string | fun():string?
----@field opts? table
-
 ---@alias SubmodeDefaultMappingRegister fun(lhs: string, rhs: string | function, opts: table?)
