@@ -90,10 +90,7 @@ function M.is_parent_same(submode, name)
         ["!"] = fany { M.is_insert_mode, M.is_cmdline_mode },
         [""] = fany { M.is_normal_mode, M.is_visual_mode, M.is_o_pending_mode },
     }, function()
-        vim.notify(string.format("invalid mode `%s`", parent), vim.log.levels.ERROR, {
-            title = "submode.nvim",
-        })
-        return false
+        error(string.format("invalid mode `%s`", parent))
     end)
 end
 
