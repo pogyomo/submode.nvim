@@ -244,8 +244,8 @@ APIS                                          *submode.nvim-submode.nvim-apis*
             - `"error"` Throw error. This is default.
             - `"keep"` Keep current submode.
             - `"override"` Override old submode.
-    - `register?: function` Callback to register default mappings. Take a following value:
-        - `default: fun(lhs: string, rhs: string | function, opts?: table)` When called, register given default mapping to this submode.
+    - `default?: function` Callback to register default mappings. Take a following value:
+        - `register: fun(lhs: string, rhs: string | function, opts?: table)` When called, register given default mapping to this submode.
 - `set(name, lhs, rhs, opts)`
     - Add a mapping to `name`. Same interface as `vim.keymap.set`.
     - `name: string` Name of target submode.
