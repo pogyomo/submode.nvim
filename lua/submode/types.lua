@@ -3,13 +3,13 @@
 
 ---@class SubmodeState
 ---@field current_mode string Represent current mode, or empty string if not in submode.
----@field submode_to_info table<string, SubmodeInfo> Infomation of the submode.
+---@field submode_to_opts table<string, SubmodeOpts> Infomation of the submode.
 ---@field submode_to_user_mappings table<string, SubmodeMappings> User mappings of the submode.
 ---@field submode_to_default_mappings table<string, SubmodeMappings> Default mappings of the submode.
 ---@field snapshot SnapshotManager
 ---@field leave_bufs integer[] Buffers where leave key registered.
 
----@class SubmodeInfo
+---@class SubmodeOpts
 ---@field mode ShortenMode
 ---@field show_mode? boolean
 ---@field mode_name? string | fun():string

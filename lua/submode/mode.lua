@@ -70,7 +70,7 @@ end
 ---@param submode Submode
 ---@param name string Name of submode.
 function M.is_parent_same(submode, name)
-    local parent = submode.state.submode_to_info[name].mode
+    local parent = submode.state.submode_to_opts[name].mode
     return utils.match(parent, {
         ["n"] = M.is_normal_mode,
         ["v"] = fany { M.is_visual_mode, M.is_select_mode },

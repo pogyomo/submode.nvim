@@ -185,10 +185,10 @@ The following user events will be triggered.
 
 ## :desktop_computer: APIS
 
-- `create(name, info, register)`
+- `create(name, opts, register)`
     - Create a new submode.
     - `name: string` Name of this submode.
-    - `info: table` Infomation of this submode. Have the following fields.
+    - `opts: table` Options of this submode. Have the following fields.
         - `mode: string` Parent mode of this submode like `"n"`, `"v"`, etc.
         - `show_mode?: boolean` False to suppress `mode()` returns the submode name.
         - `mode_name?: string | fun(): string` Change the value `mode()` returns.

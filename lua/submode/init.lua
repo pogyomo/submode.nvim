@@ -6,7 +6,7 @@ local snapshot = require("submode.snapshot")
 ---@class SubmodeState
 local default_state = {
     current_mode = "",
-    submode_to_info = {},
+    submode_to_opts = {},
     submode_to_user_mappings = {},
     submode_to_default_mappings = {},
     snapshot = snapshot:new(),
@@ -20,46 +20,46 @@ local M = {
 
 ---Create a new submode.
 ---@param name string Name of this submode.
----@param info SubmodeInfo Infomation of this submode.
+---@param opts SubmodeOpts Options of this submode.
 ---@param register? fun(default: SubmodeDefaultMappingRegister) Default mappings register
-function M.create(name, info, register)
+function M.create(name, opts, register)
     vim.validate {
         name = { name, "string" },
-        info = { info, "table" },
+        opts = { opts, "table" },
         register = { register, "function", true },
     }
 
     local state = M.state
 
     -- Judge to continue process by checking `override_behavior`.
-    if state.submode_to_info[name] then
-        if state.submode_to_info[name].override_behavior == "error" then
+    if state.submode_to_opts[name] then
+        if state.submode_to_opts[name].override_behavior == "error" then
             error(string.format("submode `%s` already exists", name))
-        elseif state.submode_to_info[name].override_behavior == "keep" then
+        elseif state.submode_to_opts[name].override_behavior == "keep" then
             return
         end
     end
 
-    ---@type SubmodeInfo
-    info = vim.tbl_extend("keep", info, {
+    ---@type SubmodeOpts
+    opts = vim.tbl_extend("keep", opts, {
         show_mode = true,
         enter = {},
         leave = {},
         leave_when_mode_changed = false,
         override_behavior = "error",
     })
-    state.submode_to_info[name] = info
+    state.submode_to_opts[name] = opts
     state.submode_to_user_mappings[name] = {}
     state.submode_to_default_mappings[name] = {}
 
-    local listlized_enter = utils.listlize(info.enter) --[=[@as string[]]=]
+    local listlized_enter = utils.listlize(opts.enter) --[=[@as string[]]=]
     for _, enter in ipairs(listlized_enter) do
-        vim.keymap.set(info.mode, enter, function()
+        vim.keymap.set(opts.mode, enter, function()
             M.enter(name)
         end)
     end
 
-    if info.leave_when_mode_changed then
+    if opts.leave_when_mode_changed then
         vim.api.nvim_create_autocmd("ModeChanged", {
             group = vim.api.nvim_create_augroup(string.format("submode-%s-augroup", name), {}),
             pattern = "*",
@@ -72,10 +72,10 @@ function M.create(name, info, register)
     if not register then
         return
     end
-    register(function(lhs, rhs, opts)
+    register(function(lhs, rhs, opts_)
         M.state.submode_to_default_mappings[name][lhs] = {
             rhs = rhs,
-            opts = opts,
+            opts = opts_,
         }
     end)
 end
@@ -99,7 +99,7 @@ function M.set(name, lhs, rhs, opts)
     }
 
     if M.state.current_mode == name then
-        vim.keymap.set(M.state.submode_to_info[name].mode, lhs, rhs, opts)
+        vim.keymap.set(M.state.submode_to_opts[name].mode, lhs, rhs, opts)
     end
 end
 
@@ -121,10 +121,10 @@ function M.del(name, lhs, opts)
     M.state.submode_to_user_mappings[name][lhs] = nil
 
     if M.state.current_mode == name then
-        vim.keymap.del(M.state.submode_to_info[name].mode, lhs, opts)
+        vim.keymap.del(M.state.submode_to_opts[name].mode, lhs, opts)
         if M.state.submode_to_default_mappings[name][lhs] then
             vim.keymap.set(
-                M.state.submode_to_info[name].mode,
+                M.state.submode_to_opts[name].mode,
                 lhs,
                 M.state.submode_to_default_mappings[name][lhs].rhs,
                 M.state.submode_to_default_mappings[name][lhs].opts
@@ -144,13 +144,13 @@ function M.mode()
     end
 
     local curr = state.current_mode
-    local info = state.submode_to_info[curr]
+    local opts = state.submode_to_opts[curr]
     local parent_is_same = mode.is_parent_same(M, curr)
-    if parent_is_same and info.show_mode then
-        if type(info.mode_name) == "function" then
-            return info.mode_name()
-        elseif type(info.mode_name) == "string" then
-            return info.mode_name --[[@as string]]
+    if parent_is_same and opts.show_mode then
+        if type(opts.mode_name) == "function" then
+            return opts.mode_name()
+        elseif type(opts.mode_name) == "string" then
+            return opts.mode_name --[[@as string]]
         else
             return state.current_mode
         end
@@ -167,10 +167,10 @@ function M.enter(name)
     }
 
     local state = M.state
-    local info = state.submode_to_info[name]
+    local opts = state.submode_to_opts[name]
 
     -- Validate given submode's name.
-    if not info then
+    if not opts then
         error(string.format("submode `%s` doesn't exist", name))
     end
 
@@ -193,32 +193,32 @@ function M.enter(name)
     end
 
     -- Create snapshot
-    state.snapshot:create(info.mode)
+    state.snapshot:create(opts.mode)
 
     -- Register default mappings
     for lhs, element in pairs(state.submode_to_default_mappings[name] or {}) do
         if not state.submode_to_user_mappings[name][lhs] then
-            vim.keymap.set(info.mode, lhs, element.rhs, element.opts)
+            vim.keymap.set(opts.mode, lhs, element.rhs, element.opts)
         end
     end
 
     -- Register user mappings
     for lhs, element in pairs(state.submode_to_user_mappings[name] or {}) do
-        vim.keymap.set(info.mode, lhs, element.rhs, element.opts)
+        vim.keymap.set(opts.mode, lhs, element.rhs, element.opts)
     end
 
     -- Register leave keys to global and all buffers
     state.leave_bufs = utils.get_list_bufs()
     for _, leave in
-        ipairs(utils.listlize(info.leave) --[=[@as string[]]=])
+        ipairs(utils.listlize(opts.leave) --[=[@as string[]]=])
     do
-        vim.api.nvim_set_keymap(info.mode, leave, "", {
+        vim.api.nvim_set_keymap(opts.mode, leave, "", {
             callback = function()
                 M.leave()
             end,
         })
         for _, buf in ipairs(utils.get_list_bufs()) do
-            vim.api.nvim_buf_set_keymap(buf, info.mode, leave, "", {
+            vim.api.nvim_buf_set_keymap(buf, opts.mode, leave, "", {
                 callback = function()
                     M.leave()
                 end,
@@ -241,7 +241,7 @@ end
 function M.leave()
     local state = M.state
     local name = state.current_mode
-    local info = state.submode_to_info[name]
+    local opts = state.submode_to_opts[name]
 
     if state.current_mode == "" then
         return
@@ -257,12 +257,12 @@ function M.leave()
 
     -- Delete leave keys from global and all buffers
     for _, leave in
-        ipairs(utils.listlize(info.leave) --[=[@as string[]]=])
+        ipairs(utils.listlize(opts.leave) --[=[@as string[]]=])
     do
-        vim.api.nvim_del_keymap(info.mode, leave)
+        vim.api.nvim_del_keymap(opts.mode, leave)
         for _, buf in ipairs(state.leave_bufs) do
             if vim.api.nvim_buf_is_valid(buf) then
-                vim.api.nvim_buf_del_keymap(buf, info.mode, leave)
+                vim.api.nvim_buf_del_keymap(buf, opts.mode, leave)
             end
         end
     end
@@ -271,9 +271,9 @@ function M.leave()
     -- Delete user mappings
     for lhs, element in pairs(state.submode_to_user_mappings[state.current_mode] or {}) do
         if element.opts and element.opts.buffer then
-            vim.keymap.del(info.mode, lhs, { buffer = element.opts.buffer })
+            vim.keymap.del(opts.mode, lhs, { buffer = element.opts.buffer })
         else
-            vim.keymap.del(info.mode, lhs)
+            vim.keymap.del(opts.mode, lhs)
         end
     end
 
@@ -283,15 +283,15 @@ function M.leave()
             goto continue
         end
         if element.opts and element.opts.buffer then
-            vim.keymap.del(info.mode, lhs, { buffer = element.opts.buffer })
+            vim.keymap.del(opts.mode, lhs, { buffer = element.opts.buffer })
         else
-            vim.keymap.del(info.mode, lhs)
+            vim.keymap.del(opts.mode, lhs)
         end
         ::continue::
     end
 
     -- Restore previous keymaps from created snapshot
-    state.snapshot:restore(info.mode)
+    state.snapshot:restore(opts.mode)
 
     state.current_mode = ""
 
