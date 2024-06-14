@@ -53,8 +53,9 @@ function M.create(name, opts, default)
     state.submode_to_user_mappings[name] = {}
     state.submode_to_default_mappings[name] = {}
 
-    local listlized_enter = utils.listlize(opts.enter) --[=[@as string[]]=]
-    for _, enter in ipairs(listlized_enter) do
+    for _, enter in
+        ipairs(utils.listlize(opts.enter) --[=[@as string[]]=])
+    do
         vim.keymap.set(opts.mode, enter, function()
             M.enter(name)
         end)

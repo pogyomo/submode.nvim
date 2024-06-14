@@ -11,12 +11,9 @@ end
 ---@return fun(): boolean
 local function fany(preds)
     return function()
-        for _, pred in ipairs(preds) do
-            if pred() then
-                return true
-            end
-        end
-        return false
+        return vim.iter(preds):any(function(pred)
+            return pred()
+        end)
     end
 end
 
