@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.1.0](https://github.com/pogyomo/submode.nvim/compare/v6.0.0...v6.1.0) (2024-06-14)
+
+
+### Features
+
+* add `default` to `opts` as alternative of `default` in `create` ([1d520f9](https://github.com/pogyomo/submode.nvim/commit/1d520f9e78234f83f60addf7ef1944a0f01d65dc))
+
 ## [6.0.0](https://github.com/pogyomo/submode.nvim/compare/v5.3.0...v6.0.0) (2024-06-13)
 
 
