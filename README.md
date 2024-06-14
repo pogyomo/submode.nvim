@@ -2,7 +2,7 @@
 
 This plugin provide apis to create a submode and manipulate it. 
 
-These apis can be used on-the-fly: no need to call config like other plugin.
+These apis can be used on-the-fly: no need to call config that other plugin need.
 
 ## :warning: Warning
 
