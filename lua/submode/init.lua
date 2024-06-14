@@ -21,12 +21,12 @@ local M = {
 ---Create a new submode.
 ---@param name string Name of this submode.
 ---@param opts SubmodeOpts Options of this submode.
----@param register? fun(default: SubmodeDefaultMappingRegister) Default mappings register
-function M.create(name, opts, register)
+---@param default? fun(register: SubmodeDefaultMappingRegister) Default mappings register
+function M.create(name, opts, default)
     vim.validate {
         name = { name, "string" },
         opts = { opts, "table" },
-        register = { register, "function", true },
+        default = { default, "function", true },
     }
 
     local state = M.state
@@ -69,10 +69,10 @@ function M.create(name, opts, register)
         })
     end
 
-    if not register then
+    if not default then
         return
     end
-    register(function(lhs, rhs, opts_)
+    default(function(lhs, rhs, opts_)
         M.state.submode_to_default_mappings[name][lhs] = {
             rhs = rhs,
             opts = opts_,
