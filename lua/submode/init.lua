@@ -88,7 +88,7 @@ end
 ---@param name string Name of target submode.
 ---@param lhs string Lhs of mapping.
 ---@param rhs string | fun():string? Rhs of mapping. Can be function.
----@param opts? table Options of this mapping. Same as `opts` of `vim.keymap.set`.
+---@param opts? vim.keymap.set.Opts Options of this mapping. Same as `opts` of `vim.keymap.set`.
 function M.set(name, lhs, rhs, opts)
     vim.validate {
         name = { name, "string" },
@@ -110,7 +110,7 @@ end
 ---Delete a mapping from `name`. Same interface as `vim.keymap.del`.
 ---@param name string Name of target submode.
 ---@param lhs string Lhs of target keymap.
----@param opts? table Options for this deletion. Same as `opts` in `vim.keymap.del`.
+---@param opts? vim.keymap.del.Opts Options for this deletion. Same as `opts` in `vim.keymap.del`.
 function M.del(name, lhs, opts)
     vim.validate {
         name = { name, "string" },

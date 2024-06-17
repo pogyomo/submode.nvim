@@ -28,4 +28,4 @@
 ---@field rhs string | fun():string?
 ---@field opts? table
 
----@alias SubmodeDefaultMappingRegister fun(lhs: string, rhs: string | function, opts: table?)
+---@alias SubmodeDefaultMappingRegister fun(lhs: string, rhs: string | function, opts: vim.keymap.set.Opts?)
