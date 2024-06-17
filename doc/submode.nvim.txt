@@ -1,4 +1,4 @@
-*submode.nvim.txt*        For Neovim >= 0.10.0       Last change: 2024 June 14
+*submode.nvim.txt*        For Neovim >= 0.10.0       Last change: 2024 June 17
 
 ==============================================================================
 Table of Contents                             *submode.nvim-table-of-contents*
