@@ -71,7 +71,15 @@ function M.create(name, opts, default)
         })
     end
 
+    ---@param lhs string
+    ---@param rhs string | fun():string?
+    ---@param opts_ vim.keymap.set.Opts?
     local register = function(lhs, rhs, opts_)
+        vim.validate {
+            lhs = { lhs, "string" },
+            rhs = { rhs, { "string", "function" } },
+            opts = { opts_, "table", true },
+        }
         M.state.submode_to_default_mappings[name][lhs] = {
             rhs = rhs,
             opts = opts_,

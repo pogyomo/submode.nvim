@@ -26,6 +26,6 @@
 ---Infomation of mapping except lhs.
 ---@class SubmodeMappingElement
 ---@field rhs string | fun():string?
----@field opts? table
+---@field opts? vim.keymap.set.Opts
 
 ---@alias SubmodeDefaultMappingRegister fun(lhs: string, rhs: string | function, opts: vim.keymap.set.Opts?)
