@@ -63,12 +63,11 @@ function M.is_terminal_mode()
     return string.find(mode(), "^t") ~= nil
 end
 
----Whether current mode and given submode's parent is same or not.
----@param submode Submode
----@param name string Name of submode.
-function M.is_parent_same(submode, name)
-    local parent = submode.state.submode_to_opts[name].mode
-    return utils.match(parent, {
+---Returns true if current mode is expected mode.
+---@param expect ShortenMode shorten mode name.
+---@return boolean
+function M.check_mode(expect)
+    local checkers = {
         ["n"] = M.is_normal_mode,
         ["v"] = fany { M.is_visual_mode, M.is_select_mode },
         ["o"] = M.is_o_pending_mode,
@@ -86,9 +85,8 @@ function M.is_parent_same(submode, name)
         ["t"] = M.is_terminal_mode,
         ["!"] = fany { M.is_insert_mode, M.is_cmdline_mode },
         [""] = fany { M.is_normal_mode, M.is_visual_mode, M.is_o_pending_mode },
-    }, function()
-        error(string.format("invalid mode `%s`", parent))
-    end)
+    }
+    return assert(checkers[expect], string.format("invalid mode `%s`", expect))()
 end
 
 return M

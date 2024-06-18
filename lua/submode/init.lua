@@ -157,8 +157,7 @@ function M.mode()
 
     local curr = state.current_mode
     local opts = state.submode_to_opts[curr]
-    local parent_is_same = mode.is_parent_same(M, curr)
-    if parent_is_same and opts.show_mode then
+    if mode.check_mode(opts.mode) and opts.show_mode then
         if type(opts.mode_name) == "function" then
             return opts.mode_name()
         elseif type(opts.mode_name) == "string" then
@@ -186,8 +185,8 @@ function M.enter(name)
         error(string.format("submode `%s` doesn't exist", name))
     end
 
-    -- Validate that current mode and submode's parent mode is same
-    if not mode.is_parent_same(M, name) then
+    -- Validate that current mode are expected mode.
+    if not mode.check_mode(opts.mode) then
         return
     end
 
