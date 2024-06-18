@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.2.0](https://github.com/pogyomo/submode.nvim/compare/v6.1.0...v6.2.0) (2024-06-18)
+
+
+### Features
+
+* add types to arguments of register, and validate it ([597c2a7](https://github.com/pogyomo/submode.nvim/commit/597c2a78977ee577a39dfc51d23a7967ea2532b0))
+
 ## [6.1.0](https://github.com/pogyomo/submode.nvim/compare/v6.0.0...v6.1.0) (2024-06-14)
 
 
