@@ -186,6 +186,19 @@ The following user events will be triggered.
 - `SubmodeLeavePost` 
     - Emitted when `submode.leave` called and after all process done.
     - `data` attribute will hold `name` for corresponding submode name.
+ 
+You can use these events with the following code:
+
+```lua
+vim.api.nvim_create_autocmd("User", {
+    group = vim.api.nvim_create_augroup("user-event", {}),
+    pattern = "SubmodeEnterPre", -- Name of user events
+    callback = function(env)
+        vim.notify("SubmodeEnterPre fired")
+        vim.notify(string.format("submode: %s", env.data.name))
+    end
+})
+```
 
 ## :desktop_computer: APIS
 
