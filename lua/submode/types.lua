@@ -13,6 +13,7 @@
 ---@field mode ShortenMode
 ---@field show_mode? boolean
 ---@field mode_name? string | fun():string
+---@field hock? { on_enter: function, on_leave: function }
 ---@field enter? string | string[]
 ---@field leave? string | string[]
 ---@field default? fun(register: SubmodeDefaultMappingRegister)

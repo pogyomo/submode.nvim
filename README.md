@@ -211,6 +211,9 @@ vim.api.nvim_create_autocmd("User", {
         - `mode_name?: string | fun(): string` Change the value `mode()` returns.
         - `enter?: string | string[]` Keys to enter to this submode.
         - `leave?: string | string[]` Keys to leave from this submode.
+        - `hock: table` Holds callbacks called on specific timing.
+            - `on_enter: fun()` Executed on same timing as `SubmodeEnterPost`.
+            - `on_leave: fun()` Executed on same timing as `SubmodeLeavePost`.
         - `default?: function` Callback to register default mappings. Take a following value:
             - `register: fun(lhs: string, rhs: string | function, opts?: table)` When called, this callback register given default mapping to this submode.
         - `leave_when_mode_changed?: boolean` Whether leave from current submode or not when parent mode is changed i.e. changed normal mode to visual mode. Default is false.

@@ -45,6 +45,10 @@ function M.create(name, opts, default)
         show_mode = true,
         enter = {},
         leave = {},
+        hock = {
+            on_enter = function() end,
+            on_leave = function() end,
+        },
         default = function() end,
         leave_when_mode_changed = false,
         override_behavior = "error",
@@ -246,6 +250,7 @@ function M.enter(name)
             name = name,
         },
     })
+    opts.hock.on_enter()
 end
 
 ---Leave from current submode.
@@ -313,6 +318,7 @@ function M.leave()
             name = name,
         },
     })
+    opts.hock.on_leave()
 end
 
 return M
