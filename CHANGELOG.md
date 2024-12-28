@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.3.0](https://github.com/pogyomo/submode.nvim/compare/v6.2.0...v6.3.0) (2024-12-28)
+
+
+### Features
+
+* add hock as shorthand for `SubmodeEnterPost` and `SubmodeLeavePost` ([#34](https://github.com/pogyomo/submode.nvim/issues/34)) ([9eeb726](https://github.com/pogyomo/submode.nvim/commit/9eeb726368137274ec9a1b2d734e752ef4176b97))
+
 ## [6.2.0](https://github.com/pogyomo/submode.nvim/compare/v6.1.0...v6.2.0) (2024-06-18)
 
 
