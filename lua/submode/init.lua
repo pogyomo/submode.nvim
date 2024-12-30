@@ -45,7 +45,7 @@ function M.create(name, opts, default)
         show_mode = true,
         enter = {},
         leave = {},
-        hock = {
+        hook = {
             on_enter = function() end,
             on_leave = function() end,
         },
