@@ -211,7 +211,7 @@ vim.api.nvim_create_autocmd("User", {
         - `mode_name?: string | fun(): string` Change the value `mode()` returns.
         - `enter?: string | string[]` Keys to enter to this submode.
         - `leave?: string | string[]` Keys to leave from this submode.
-        - `hock: table` Holds callbacks called on specific timing.
+        - `hook: table` Holds callbacks called on specific timing.
             - `on_enter: fun()` Executed on same timing as `SubmodeEnterPost`.
             - `on_leave: fun()` Executed on same timing as `SubmodeLeavePost`.
         - `default?: function` Callback to register default mappings. Take a following value:
