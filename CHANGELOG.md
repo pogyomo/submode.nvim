@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.4.1](https://github.com/pogyomo/submode.nvim/compare/v6.4.0...v6.4.1) (2024-12-30)
+
+
+### Bug Fixes
+
+* invalid menber name for table initialize ([#38](https://github.com/pogyomo/submode.nvim/issues/38)) ([39fe80c](https://github.com/pogyomo/submode.nvim/commit/39fe80c0798986e64efe93d2f2b22b0a1f594f84))
+
 ## [6.4.0](https://github.com/pogyomo/submode.nvim/compare/v6.3.0...v6.4.0) (2024-12-30)
 
 
