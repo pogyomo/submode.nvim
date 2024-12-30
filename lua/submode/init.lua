@@ -250,7 +250,7 @@ function M.enter(name)
             name = name,
         },
     })
-    opts.hock.on_enter()
+    opts.hook.on_enter()
 end
 
 ---Leave from current submode.
@@ -318,7 +318,7 @@ function M.leave()
             name = name,
         },
     })
-    opts.hock.on_leave()
+    opts.hook.on_leave()
 end
 
 return M
