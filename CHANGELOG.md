@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.4.0](https://github.com/pogyomo/submode.nvim/compare/v6.3.0...v6.4.0) (2024-12-30)
+
+
+### Features
+
+* hock -&gt; hook ([#36](https://github.com/pogyomo/submode.nvim/issues/36)) ([48cbfc7](https://github.com/pogyomo/submode.nvim/commit/48cbfc7ffd8569a6240c6380b372b8dcc5e4f5eb))
+
 ## [6.3.0](https://github.com/pogyomo/submode.nvim/compare/v6.2.0...v6.3.0) (2024-12-28)
 
 
