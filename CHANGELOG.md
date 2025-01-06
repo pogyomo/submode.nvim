@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.4.2](https://github.com/pogyomo/submode.nvim/compare/v6.4.1...v6.4.2) (2025-01-06)
+
+
+### Bug Fixes
+
+* respect neovim version for calling vim.validate ([#41](https://github.com/pogyomo/submode.nvim/issues/41)) ([013e9ba](https://github.com/pogyomo/submode.nvim/commit/013e9ba397fd07684e351b364572473ac92d1d86))
+
 ## [6.4.1](https://github.com/pogyomo/submode.nvim/compare/v6.4.0...v6.4.1) (2024-12-30)
 
 
