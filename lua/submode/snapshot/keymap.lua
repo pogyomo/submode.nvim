@@ -21,19 +21,13 @@
 ---@param buf  integer? Buffer handle or 0 for current buffer, or nil for global.
 ---@return KeymapInfo[]
 local function get_keymap(mode, buf)
-    vim.validate {
-        mode = {
-            mode,
-            function(s)
-                -- stylua: ignore
-                return vim.list_contains({
-                    "n", "v", "x", "s", "o", "i", "l", "c", "t", "!", ""
-                }, s)
-            end,
-            "n, v, x, s, o, i, l, c, t, ! or ''",
-        },
-        buf = { buf, { "number", "nil" } },
-    }
+    vim.validate("mode", mode, function(s)
+        -- stylua: ignore
+        return vim.list_contains({
+            "n", "v", "x", "s", "o", "i", "l", "c", "t", "!", ""
+        }, s)
+    end, "n, v, x, s, o, i, l, c, t, ! or ''")
+    vim.validate("buf", buf, { "number", "nil" })
 
     local getter = function(m)
         if buf then
