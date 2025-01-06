@@ -23,11 +23,9 @@ local M = {
 ---@param opts SubmodeOpts Options of this submode.
 ---@param default? fun(register: SubmodeDefaultMappingRegister) Default mappings register
 function M.create(name, opts, default)
-    vim.validate {
-        name = { name, "string" },
-        opts = { opts, "table" },
-        default = { default, "function", true },
-    }
+    vim.validate("name", name, "string")
+    vim.validate("opts", opts, "table")
+    vim.validate("default", default, "function", true)
 
     local state = M.state
 
@@ -79,11 +77,10 @@ function M.create(name, opts, default)
     ---@param rhs string | fun():string?
     ---@param opts_ vim.keymap.set.Opts?
     local register = function(lhs, rhs, opts_)
-        vim.validate {
-            lhs = { lhs, "string" },
-            rhs = { rhs, { "string", "function" } },
-            opts = { opts_, "table", true },
-        }
+        vim.validate("lhs", lhs, "string")
+        vim.validate("rhs", rhs, { "string", "function" })
+        vim.validate("opts", opts_, "table", true)
+
         M.state.submode_to_default_mappings[name][lhs] = {
             rhs = rhs,
             opts = opts_,
@@ -102,12 +99,10 @@ end
 ---@param rhs string | fun():string? Rhs of mapping. Can be function.
 ---@param opts? vim.keymap.set.Opts Options of this mapping. Same as `opts` of `vim.keymap.set`.
 function M.set(name, lhs, rhs, opts)
-    vim.validate {
-        name = { name, "string" },
-        lhs = { lhs, "string" },
-        rhs = { rhs, { "string", "function" } },
-        opts = { opts, "table", true },
-    }
+    vim.validate("name", name, "string")
+    vim.validate("lhs", lhs, "string")
+    vim.validate("rhs", rhs, { "string", "function" })
+    vim.validate("opts", opts, "table", true)
 
     M.state.submode_to_user_mappings[name][lhs] = {
         rhs = rhs,
@@ -124,11 +119,9 @@ end
 ---@param lhs string Lhs of target keymap.
 ---@param opts? vim.keymap.del.Opts Options for this deletion. Same as `opts` in `vim.keymap.del`.
 function M.del(name, lhs, opts)
-    vim.validate {
-        name = { name, "string" },
-        lhs = { lhs, "string" },
-        opts = { opts, "table", true },
-    }
+    vim.validate("name", name, "string")
+    vim.validate("lhs", lhs, "string")
+    vim.validate("opts", opts, "table", true)
 
     if not M.state.submode_to_user_mappings[name][lhs] then
         return
@@ -177,9 +170,7 @@ end
 ---Enter the submode.
 ---@param name string Name of submode to enter.
 function M.enter(name)
-    vim.validate {
-        name = { name, "string" },
-    }
+    vim.validate("name", name, "string")
 
     local state = M.state
     local opts = state.submode_to_opts[name]
