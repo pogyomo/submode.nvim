@@ -19,7 +19,7 @@ This plugin allow users to create submode, which has almost same keymaps as the 
 ### :rocket: Create a submode
 
 For example, when we try to move around windows, we need to press `<C-w>h`, `<C-w>j`, `<C-w>k` and `<C-w>l` multiple times.
-Therefore, it would be useful to be able to press `<C-w>` and then `hjkl` to move the window.
+Therefore, it would be useful to be able to move window with `hjkl`.
 
 Fortunately, you can define such submode as follow.
 
@@ -27,7 +27,7 @@ Fortunately, you can define such submode as follow.
 local submode = require("submode")
 submode.create("WinMove", {
     mode = "n",
-    enter = "<C-w>",
+    enter = "<Leader>r",
     leave = { "q", "<ESC>" },
     default = function(register)
         register("h", "<C-w>h")
@@ -38,7 +38,7 @@ submode.create("WinMove", {
 })
 ```
 
-This submode has default mappings `hjkl` for moving around windows, and you can enter this submode by pressing `<C-w>` when in normal mode. Once you enter this submode, you can use `hjkl`. You can leave from this submode by pressing `q` or `escape`, and after that `hjkl` cannot be used to move windows anymore.
+This submode has default mappings `hjkl` for moving around windows, and you can enter this submode by pressing `<Leader>r` when in normal mode. Once you enter this submode, you can use `hjkl`. You can leave from this submode by pressing `q` or `escape`, and after that `hjkl` cannot be used to move windows anymore.
 
 ### :mag: Extend exists submode
 
@@ -90,7 +90,7 @@ For example, the submode `WinMove` also can be defined as follow:
 local submode = require("submode")
 submode.create("WinMove", {
     mode = "n",
-    enter = "<C-w>",
+    enter = "<Leader>r",
     leave = { "q", "<ESC>" },
 })
 submode.set("WinMove", "h", "<C-w>h")
