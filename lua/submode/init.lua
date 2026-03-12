@@ -40,7 +40,7 @@ function M.create(name, opts, default)
     end
 
     ---@type SubmodeOpts
-    opts = vim.tbl_extend("keep", opts, {
+    opts = vim.tbl_deep_extend("keep", opts, {
         show_mode = true,
         enter = {},
         leave = {},
