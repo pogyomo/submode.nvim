@@ -1,5 +1,12 @@
 # Changelog
 
+## [6.4.3](https://github.com/pogyomo/submode.nvim/compare/v6.4.2...v6.4.3) (2026-03-12)
+
+
+### Bug Fixes
+
+* undefined on_enter/on_leave called if only one of them supplied ([c877c04](https://github.com/pogyomo/submode.nvim/commit/c877c0473fef8d04eaa59409a827e06d1c37f345))
+
 ## [6.4.2](https://github.com/pogyomo/submode.nvim/compare/v6.4.1...v6.4.2) (2025-01-06)
 
 
